@@ -1,6 +1,5 @@
 import React from 'react';
-import { Layout } from 'antd'
-import 'antd/dist/antd.css';
+import { Layout,Button  } from 'antd'
 import FileSearch from './components/slider/FileSearch'
 import FileLists from './components/slider/FileLists'
 const { Header, Footer, Sider, Content } = Layout;
@@ -12,6 +11,7 @@ function App() {
       <Sider
       >
         <div>
+            <Button type="primary">Button</Button>
             <FileSearch /> 
             <FileLists />
         </div>

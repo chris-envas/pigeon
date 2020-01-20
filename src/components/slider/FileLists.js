@@ -1,6 +1,5 @@
 import React from 'react'
-import { List, Typography } from 'antd'
-import example from './example.less'
+import { List } from 'antd'
 
 const data = [
   'Racing car sprays burning fuel into crowd.',
@@ -10,13 +9,10 @@ const data = [
   'Los Angeles battles huge wildfires.',
 ];
 
-
-
 const FileLists = () => {
   return (
     <div>
       <List
-        className='example.c'
         size="small"
         header={<div>Header</div>}
         footer={<div>Footer</div>}

@@ -6,6 +6,7 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
+    "antd": "^3.26.7",
     "electron": "^7.1.9",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
@@ -17,7 +18,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "dev": "concurrently \"electron .\" \"cross-env BROWSER=none npm run start\""
+    "dev": "concurrently \"wait-on http://localhost:3000/ electron .\" \"cross-env BROWSER=none npm run start\""
   },
   "eslintConfig": {
     "extends": "react-app"

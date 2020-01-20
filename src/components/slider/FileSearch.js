@@ -11,12 +11,13 @@ const FileSearch = () => {
                 placeholder="搜索云文档"
                 loading={false}
                 disabled={false}
-                onSearch={value => {
-                    console.log(value)
-                    setValue(value)
+                onSearch={_value => {
+                    console.log(_value)
+                    setValue(_value)
                 }}
                 style={{ width: 200}}
             />
+            {value}
         </div>
     )
 }

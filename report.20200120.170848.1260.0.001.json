@@ -4,10 +4,10 @@
     "reportVersion": 1,
     "event": "Allocation failed - JavaScript heap out of memory",
     "trigger": "FatalError",
-    "filename": "report.20200120.104710.2892.0.001.json",
-    "dumpEventTime": "2020-01-20T10:47:10Z",
-    "dumpEventTimeStamp": "1579488430036",
-    "processId": 2892,
+    "filename": "report.20200120.170848.1260.0.001.json",
+    "dumpEventTime": "2020-01-20T17:08:48Z",
+    "dumpEventTimeStamp": "1579511328010",
+    "processId": 1260,
     "cwd": "C:\\Users\\Administrator\\Desktop\\cloud-electron-docs",
     "commandLine": [
       "C:\\Program Files\\nodejs\\node.exe",
@@ -49,41 +49,95 @@
       {
         "model": "Intel(R) Core(TM) i5-7500 CPU @ 3.40GHz",
         "speed": 3408,
-        "user": 226437,
+        "user": 1167593,
         "nice": 0,
-        "sys": 395500,
-        "idle": 568906,
-        "irq": 9031
+        "sys": 1114359,
+        "idle": 16918234,
+        "irq": 56359
       },
       {
         "model": "Intel(R) Core(TM) i5-7500 CPU @ 3.40GHz",
         "speed": 3408,
-        "user": 238046,
+        "user": 1462921,
         "nice": 0,
-        "sys": 387656,
-        "idle": 564828,
-        "irq": 2796
+        "sys": 1033843,
+        "idle": 16703109,
+        "irq": 10468
       },
       {
         "model": "Intel(R) Core(TM) i5-7500 CPU @ 3.40GHz",
         "speed": 3408,
-        "user": 252562,
+        "user": 1374000,
         "nice": 0,
-        "sys": 382843,
-        "idle": 555125,
-        "irq": 2796
+        "sys": 952765,
+        "idle": 16873109,
+        "irq": 10250
       },
       {
         "model": "Intel(R) Core(TM) i5-7500 CPU @ 3.40GHz",
         "speed": 3408,
-        "user": 275343,
+        "user": 1433984,
         "nice": 0,
-        "sys": 360250,
-        "idle": 554937,
-        "irq": 2171
+        "sys": 870593,
+        "idle": 16895296,
+        "irq": 9062
       }
     ],
     "networkInterfaces": [
+      {
+        "name": "以太网",
+        "internal": false,
+        "mac": "10:7b:44:7f:96:be",
+        "address": "240e:f8:aa01:e9fc:d45c:ca7f:5112:b68d",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "family": "IPv6",
+        "scopeid": 0
+      },
+      {
+        "name": "以太网",
+        "internal": false,
+        "mac": "10:7b:44:7f:96:be",
+        "address": "240e:f8:aa02:52c3:d45c:ca7f:5112:b68d",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "family": "IPv6",
+        "scopeid": 0
+      },
+      {
+        "name": "以太网",
+        "internal": false,
+        "mac": "10:7b:44:7f:96:be",
+        "address": "fd28:644c:9a1e:0:d45c:ca7f:5112:b68d",
+        "netmask": "ffff:ffff:ffff:ffff::",
+        "family": "IPv6",
+        "scopeid": 0
+      },
+      {
+        "name": "以太网",
+        "internal": false,
+        "mac": "10:7b:44:7f:96:be",
+        "address": "240e:f8:aa01:e9fc:d5e9:a5d4:eec3:6ab3",
+        "netmask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
+        "family": "IPv6",
+        "scopeid": 0
+      },
+      {
+        "name": "以太网",
+        "internal": false,
+        "mac": "10:7b:44:7f:96:be",
+        "address": "240e:f8:aa02:52c3:d5e9:a5d4:eec3:6ab3",
+        "netmask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
+        "family": "IPv6",
+        "scopeid": 0
+      },
+      {
+        "name": "以太网",
+        "internal": false,
+        "mac": "10:7b:44:7f:96:be",
+        "address": "fd28:644c:9a1e:0:d5e9:a5d4:eec3:6ab3",
+        "netmask": "ffff:ffff:ffff:ffff:ffff:ffff:ffff:ffff",
+        "family": "IPv6",
+        "scopeid": 0
+      },
       {
         "name": "以太网",
         "internal": false,
@@ -219,19 +273,15 @@
       "symbol": "v8::internal::SetupIsolateDelegate::SetupHeap+567949"
     },
     {
-      "pc": "0x00007ff713fa3991",
-      "symbol": "v8::internal::SetupIsolateDelegate::SetupHeap+571841"
-    },
-    {
-      "pc": "0x000003afa49f5a89",
+      "pc": "0x000003b6916d3514",
       "symbol": ""
     }
   ],
   "javascriptHeap": {
-    "totalMemory": 2165841920,
-    "totalCommittedMemory": 2165841920,
-    "usedMemory": 1956932480,
-    "availableMemory": 94263184,
+    "totalMemory": 2166796288,
+    "totalCommittedMemory": 2166796288,
+    "usedMemory": 1947316776,
+    "availableMemory": 102606624,
     "memoryLimit": 2197815296,
     "heapSpaces": {
       "read_only_space": {
@@ -245,35 +295,35 @@
         "memorySize": 33554432,
         "committedMemory": 33554432,
         "capacity": 16759808,
-        "used": 2963776,
-        "available": 13796032
+        "used": 2956584,
+        "available": 13803224
       },
       "old_space": {
-        "memorySize": 2001317888,
-        "committedMemory": 2001317888,
-        "capacity": 1856077136,
-        "used": 1824572744,
-        "available": 31504392
+        "memorySize": 2028056576,
+        "committedMemory": 2028056576,
+        "capacity": 1881423696,
+        "used": 1840628688,
+        "available": 40795008
       },
       "code_space": {
-        "memorySize": 1998848,
-        "committedMemory": 1998848,
-        "capacity": 1557856,
-        "used": 1557856,
+        "memorySize": 1736704,
+        "committedMemory": 1736704,
+        "capacity": 1375136,
+        "used": 1375136,
         "available": 0
       },
       "map_space": {
         "memorySize": 3674112,
         "committedMemory": 3674112,
-        "capacity": 2983520,
-        "used": 2983520,
+        "capacity": 3006720,
+        "used": 3006720,
         "available": 0
       },
       "large_object_space": {
-        "memorySize": 124411904,
-        "committedMemory": 124411904,
-        "capacity": 124271888,
-        "used": 124271888,
+        "memorySize": 98889728,
+        "committedMemory": 98889728,
+        "capacity": 98766952,
+        "used": 98766952,
         "available": 0
       },
       "code_large_object_space": {
@@ -293,17 +343,17 @@
     }
   },
   "resourceUsage": {
-    "userCpuSeconds": 134.984,
-    "kernelCpuSeconds": 157.578,
-    "cpuConsumptionPercent": 110.819,
-    "maxRss": 3020496896,
+    "userCpuSeconds": 132.531,
+    "kernelCpuSeconds": 157.156,
+    "cpuConsumptionPercent": 258.649,
+    "maxRss": 2998312960,
     "pageFaults": {
-      "IORequired": 1341784,
+      "IORequired": 1252572,
       "IONotRequired": 0
     },
     "fsActivity": {
-      "reads": 8449,
-      "writes": 247
+      "reads": 8527,
+      "writes": 121
     }
   },
   "libuv": [
@@ -497,13 +547,13 @@
     "npm_package_dependencies__testing_library_jest_dom": "^4.2.4",
     "npm_package_dependencies__testing_library_react": "^9.3.2",
     "npm_package_dependencies__testing_library_user_event": "^7.1.2",
-    "npm_package_description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
+    "npm_package_description": "",
     "npm_package_devDependencies_concurrently": "^5.0.2",
     "npm_package_devDependencies_cross_env": "^6.0.3",
     "npm_package_devDependencies_electron_is_dev": "^1.1.0",
     "npm_package_devDependencies_wait_on": "^4.0.0",
     "npm_package_eslintConfig_extends": "react-app",
-    "npm_package_gitHead": "302da937d636c462a95ed9d3ea50a6ad9a5a7a97",
+    "npm_package_gitHead": "838e3577448428368683788fc4a5e515f94e7ff8",
     "npm_package_main": "main.js",
     "npm_package_name": "cloud-app",
     "npm_package_private": "true",
@@ -522,8 +572,8 @@
     "ORIGINAL_TEMP": "C:/Users/ADMINI~1/AppData/Local/Temp",
     "ORIGINAL_TMP": "C:/Users/ADMINI~1/AppData/Local/Temp",
     "OS": "Windows_NT",
-    "Path": "C:\\Program Files\\nodejs\\node_modules\\npm\\node_modules\\npm-lifecycle\\node-gyp-bin;C:\\Users\\Administrator\\Desktop\\cloud-electron-docs\\node_modules\\.bin;C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\yarn--1579488164286-0.31353871679643075;C:\\Users\\Administrator\\Desktop\\cloud-electron-docs\\node_modules\\.bin;C:\\Users\\Administrator\\AppData\\Local\\Yarn\\Data\\link\\node_modules\\.bin;C:\\Users\\Administrator\\AppData\\Local\\Yarn\\bin;C:\\Program Files\\libexec\\lib\\node_modules\\npm\\bin\\node-gyp-bin;C:\\Program Files\\lib\\node_modules\\npm\\bin\\node-gyp-bin;C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\node-gyp-bin;C:\\Users\\Administrator\\bin;D:\\Program Files\\Git\\mingw64\\bin;D:\\Program Files\\Git\\usr\\local\\bin;D:\\Program Files\\Git\\usr\\bin;D:\\Program Files\\Git\\usr\\bin;D:\\Program Files\\Git\\mingw64\\bin;D:\\Program Files\\Git\\usr\\bin;C:\\Users\\Administrator\\bin;C:\\ProgramData\\Oracle\\Java\\javapath;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0;C:\\Windows\\System32\\OpenSSH;C:\\Program Files\\nodejs;D:\\Program Files\\Git\\cmd;D:\\putty;D:\\huashengdaili\\bin;C:\\Program Files\\Microsoft SQL Server\\130\\Tools\\Binn;C:\\Program Files (x86)\\Windows Kits\\8.1\\Windows Performance Toolkit;C:\\Users\\Administrator\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\Administrator\\AppData\\Roaming\\npm;D:\\Microsoft VS Code\\bin;C:\\Program Files\\Java\\jdk1.8.0_51\\bi;C:\\Program Files\\Java\\jdk1.8.0_51\\jre\\bin;.;C:\\Program Files\\Java\\jdk1.8.0_51\\bin;C:\\Program Files\\Java\\jdk1.8.0_51\\jre;D:\\Android\\SDK\\platform-tools;D:\\Android\\SDK\\tools;C:\\Users\\Administrator\\AppData\\Local\\atom\\bin;D:\\Program Files\\Git\\usr\\bin\\vendor_perl;D:\\Program Files\\Git\\usr\\bin\\core_perl",
-    "PATH": "C:\\Program Files\\nodejs\\node_modules\\npm\\node_modules\\npm-lifecycle\\node-gyp-bin;C:\\Users\\Administrator\\Desktop\\cloud-electron-docs\\node_modules\\.bin;C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\yarn--1579488164286-0.31353871679643075;C:\\Users\\Administrator\\Desktop\\cloud-electron-docs\\node_modules\\.bin;C:\\Users\\Administrator\\AppData\\Local\\Yarn\\Data\\link\\node_modules\\.bin;C:\\Users\\Administrator\\AppData\\Local\\Yarn\\bin;C:\\Program Files\\libexec\\lib\\node_modules\\npm\\bin\\node-gyp-bin;C:\\Program Files\\lib\\node_modules\\npm\\bin\\node-gyp-bin;C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\node-gyp-bin;C:\\Users\\Administrator\\bin;D:\\Program Files\\Git\\mingw64\\bin;D:\\Program Files\\Git\\usr\\local\\bin;D:\\Program Files\\Git\\usr\\bin;D:\\Program Files\\Git\\usr\\bin;D:\\Program Files\\Git\\mingw64\\bin;D:\\Program Files\\Git\\usr\\bin;C:\\Users\\Administrator\\bin;C:\\ProgramData\\Oracle\\Java\\javapath;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0;C:\\Windows\\System32\\OpenSSH;C:\\Program Files\\nodejs;D:\\Program Files\\Git\\cmd;D:\\putty;D:\\huashengdaili\\bin;C:\\Program Files\\Microsoft SQL Server\\130\\Tools\\Binn;C:\\Program Files (x86)\\Windows Kits\\8.1\\Windows Performance Toolkit;C:\\Users\\Administrator\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\Administrator\\AppData\\Roaming\\npm;D:\\Microsoft VS Code\\bin;C:\\Program Files\\Java\\jdk1.8.0_51\\bi;C:\\Program Files\\Java\\jdk1.8.0_51\\jre\\bin;.;C:\\Program Files\\Java\\jdk1.8.0_51\\bin;C:\\Program Files\\Java\\jdk1.8.0_51\\jre;D:\\Android\\SDK\\platform-tools;D:\\Android\\SDK\\tools;C:\\Users\\Administrator\\AppData\\Local\\atom\\bin;D:\\Program Files\\Git\\usr\\bin\\vendor_perl;D:\\Program Files\\Git\\usr\\bin\\core_perl",
+    "Path": "C:\\Program Files\\nodejs\\node_modules\\npm\\node_modules\\npm-lifecycle\\node-gyp-bin;C:\\Users\\Administrator\\Desktop\\cloud-electron-docs\\node_modules\\.bin;C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\yarn--1579511213808-0.3098306596738143;C:\\Users\\Administrator\\Desktop\\cloud-electron-docs\\node_modules\\.bin;C:\\Users\\Administrator\\AppData\\Local\\Yarn\\Data\\link\\node_modules\\.bin;C:\\Users\\Administrator\\AppData\\Local\\Yarn\\bin;C:\\Program Files\\libexec\\lib\\node_modules\\npm\\bin\\node-gyp-bin;C:\\Program Files\\lib\\node_modules\\npm\\bin\\node-gyp-bin;C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\node-gyp-bin;C:\\Users\\Administrator\\bin;D:\\Program Files\\Git\\mingw64\\bin;D:\\Program Files\\Git\\usr\\local\\bin;D:\\Program Files\\Git\\usr\\bin;D:\\Program Files\\Git\\usr\\bin;D:\\Program Files\\Git\\mingw64\\bin;D:\\Program Files\\Git\\usr\\bin;C:\\Users\\Administrator\\bin;C:\\ProgramData\\Oracle\\Java\\javapath;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0;C:\\Windows\\System32\\OpenSSH;C:\\Program Files\\nodejs;D:\\Program Files\\Git\\cmd;D:\\putty;D:\\huashengdaili\\bin;C:\\Program Files\\Microsoft SQL Server\\130\\Tools\\Binn;C:\\Program Files (x86)\\Windows Kits\\8.1\\Windows Performance Toolkit;C:\\Users\\Administrator\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\Administrator\\AppData\\Roaming\\npm;D:\\Microsoft VS Code\\bin;C:\\Program Files\\Java\\jdk1.8.0_51\\bi;C:\\Program Files\\Java\\jdk1.8.0_51\\jre\\bin;.;C:\\Program Files\\Java\\jdk1.8.0_51\\bin;C:\\Program Files\\Java\\jdk1.8.0_51\\jre;D:\\Android\\SDK\\platform-tools;D:\\Android\\SDK\\tools;C:\\Users\\Administrator\\AppData\\Local\\atom\\bin;D:\\Program Files\\Git\\usr\\bin\\vendor_perl;D:\\Program Files\\Git\\usr\\bin\\core_perl",
+    "PATH": "C:\\Program Files\\nodejs\\node_modules\\npm\\node_modules\\npm-lifecycle\\node-gyp-bin;C:\\Users\\Administrator\\Desktop\\cloud-electron-docs\\node_modules\\.bin;C:\\Users\\ADMINI~1\\AppData\\Local\\Temp\\yarn--1579511213808-0.3098306596738143;C:\\Users\\Administrator\\Desktop\\cloud-electron-docs\\node_modules\\.bin;C:\\Users\\Administrator\\AppData\\Local\\Yarn\\Data\\link\\node_modules\\.bin;C:\\Users\\Administrator\\AppData\\Local\\Yarn\\bin;C:\\Program Files\\libexec\\lib\\node_modules\\npm\\bin\\node-gyp-bin;C:\\Program Files\\lib\\node_modules\\npm\\bin\\node-gyp-bin;C:\\Program Files\\nodejs\\node_modules\\npm\\bin\\node-gyp-bin;C:\\Users\\Administrator\\bin;D:\\Program Files\\Git\\mingw64\\bin;D:\\Program Files\\Git\\usr\\local\\bin;D:\\Program Files\\Git\\usr\\bin;D:\\Program Files\\Git\\usr\\bin;D:\\Program Files\\Git\\mingw64\\bin;D:\\Program Files\\Git\\usr\\bin;C:\\Users\\Administrator\\bin;C:\\ProgramData\\Oracle\\Java\\javapath;C:\\Windows\\system32;C:\\Windows;C:\\Windows\\System32\\Wbem;C:\\Windows\\System32\\WindowsPowerShell\\v1.0;C:\\Windows\\System32\\OpenSSH;C:\\Program Files\\nodejs;D:\\Program Files\\Git\\cmd;D:\\putty;D:\\huashengdaili\\bin;C:\\Program Files\\Microsoft SQL Server\\130\\Tools\\Binn;C:\\Program Files (x86)\\Windows Kits\\8.1\\Windows Performance Toolkit;C:\\Users\\Administrator\\AppData\\Local\\Microsoft\\WindowsApps;C:\\Users\\Administrator\\AppData\\Roaming\\npm;D:\\Microsoft VS Code\\bin;C:\\Program Files\\Java\\jdk1.8.0_51\\bi;C:\\Program Files\\Java\\jdk1.8.0_51\\jre\\bin;.;C:\\Program Files\\Java\\jdk1.8.0_51\\bin;C:\\Program Files\\Java\\jdk1.8.0_51\\jre;D:\\Android\\SDK\\platform-tools;D:\\Android\\SDK\\tools;C:\\Users\\Administrator\\AppData\\Local\\atom\\bin;D:\\Program Files\\Git\\usr\\bin\\vendor_perl;D:\\Program Files\\Git\\usr\\bin\\core_perl",
     "PATHEXT": ".COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JSE;.WSF;.WSH;.MSC",
     "PKG_CONFIG_PATH": "D:\\Program Files\\Git\\mingw64\\lib\\pkgconfig;D:\\Program Files\\Git\\mingw64\\share\\pkgconfig",
     "PLINK_PROTOCOL": "ssh",
@@ -569,8 +619,8 @@
     "C:\\Windows\\System32\\RPCRT4.dll",
     "C:\\Windows\\SYSTEM32\\dbghelp.dll",
     "C:\\Windows\\System32\\ADVAPI32.dll",
-    "C:\\Windows\\System32\\msvcrt.dll",
     "C:\\Windows\\System32\\ucrtbase.dll",
+    "C:\\Windows\\System32\\msvcrt.dll",
     "C:\\Windows\\System32\\sechost.dll",
     "C:\\Windows\\System32\\USER32.dll",
     "C:\\Windows\\System32\\win32u.dll",
@@ -585,7 +635,7 @@
     "C:\\Windows\\SYSTEM32\\USERENV.dll",
     "C:\\Windows\\System32\\profapi.dll",
     "C:\\Windows\\SYSTEM32\\WINMM.dll",
-    "C:\\Windows\\SYSTEM32\\winmmbase.dll",
+    "C:\\Windows\\SYSTEM32\\WINMMBASE.dll",
     "C:\\Windows\\System32\\cfgmgr32.dll",
     "C:\\Windows\\System32\\bcryptPrimitives.dll",
     "C:\\Windows\\System32\\IMM32.DLL",

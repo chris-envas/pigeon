@@ -1,9 +1,9 @@
-import React, {useState, useRef} from 'react'
+import React, {useState} from 'react'
 import {Input } from 'antd'
+
 const { Search } = Input
 
 const FileSearch = () => {
-    // const [inputActive, setInputActive] = useState(false)
     const [value, setValue] = useState('')
     return (
         <div>
@@ -17,7 +17,6 @@ const FileSearch = () => {
                 }}
                 style={{ width: 200}}
             />
-            <div style={{color:'red'}}>{value}</div>
         </div>
     )
 }

@@ -2,7 +2,8 @@ import React from 'react';
 import { Layout } from 'antd'
 import 'antd/dist/antd.css';
 import './public/css/public.css'
-import FileSearch from './components/FileSearch'
+import FileSearch from './components/slider/FileSearch'
+import FileLists from './components/slider/FileLists'
 const { Header, Footer, Sider, Content } = Layout;
 
 const style = {
@@ -14,9 +15,11 @@ function App() {
     <div className="App">
      <Layout>
       <Sider
+      style="color:red;background:red"
       >
         <div style={style}>
             <FileSearch />
+            <FileLists />
         </div>
       </Sider>
       <Layout>

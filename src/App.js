@@ -3,6 +3,7 @@ import { Layout,Button  } from 'antd'
 import FileSearch from './components/slider/FileSearch'
 import FileLists from './components/slider/FileLists'
 import './public/css/theme-antd.less'
+import defaultFiles from './utils/defaultFiles'
 const { Header, Footer, Sider, Content } = Layout;
 
 function App() {
@@ -12,9 +13,9 @@ function App() {
       <Sider
       >
         <div>
-            <Button type="primary">Button</Button>
             <FileSearch /> 
-            <FileLists />
+            <FileLists 
+            files={defaultFiles}/>
         </div>
       </Sider>
       <Layout>

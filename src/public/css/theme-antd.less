@@ -1,4 +1,33 @@
 // change something style of antd 
+@bg-color: #353535;
+@bg-color-hover: #555;
 .ant-list{
     color: #ffffff;
+}
+.ant-layout-sider{
+    background-color: transparent;
+}
+.anticon svg{
+    font-size: 12px;
+}
+.ant-tabs-nav-scroll{
+    background: @bg-color;
+}
+.ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-tab .ant-tabs-close-x{
+    color: #ffffff
+}
+.ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-tab{
+    background-color: @bg-color;
+    color: #fff;
+    border: none;
+    font-size: 12px;
+}
+.ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-tab-active{
+    background-color: @bg-color-hover;
+}
+.ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-nav-container,
+.ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-tab-active,
+.ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-tab{
+    height: 30px;
+    line-height: 30px;
 }

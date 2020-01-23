@@ -1,0 +1,45 @@
+@bg-color: #353535;
+@bg-color-hover: #555;
+.file-title{
+    width: 140px;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow : hidden;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    vertical-align: middle;
+    padding-left: 2px;
+}
+.file-lists li{
+    list-style: none;
+    height: 40px;
+    line-height: 40px;
+    text-align: left;
+    padding: 0px 5px 0px 5px;
+    background: @bg-color;
+    cursor: pointer;
+    position: relative;
+}
+.file-lists li:hover{
+    background: @bg-color-hover;
+}
+.delete-icon,.click-icon{
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    margin-top: -3px;
+}
+.click-icon{
+    right: 25px;
+}
+.input-modal-global{
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    background: transparent;
+}

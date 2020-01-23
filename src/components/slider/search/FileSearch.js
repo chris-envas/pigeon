@@ -1,3 +1,11 @@
+/*
+ * @Author: your name
+ * @Date: 2020-01-22 19:20:00
+ * @LastEditTime : 2020-01-23 17:30:09
+ * @LastEditors  : Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \cloud-electron-docs\src\components\slider\Search\FileSearch.js
+ */
 import React, {useState} from 'react'
 import {Input } from 'antd'
 

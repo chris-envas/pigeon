@@ -3,80 +3,88 @@
  */
 import React from 'react'
 import PropTypes from 'prop-types'
-
-
 import { Tabs } from 'antd';
-
-const { Tabfile } = Tabs;
+const { TabPane } = Tabs;
 
 class TabList extends React.Component {
-  constructor(props) {
-    super(props);
-    this.newTabIndex = 0;
-
-    this.state = {
-      activeKey: this.props.files[0].key,
-      files: this.props.files,
-    };
-  }
-
-  onChange = activeKey => {
-    this.setState({ activeKey });
-  };
-
-  onEdit = (targetKey, action) => {
-    this[action](targetKey);
-  };
-
-  add = () => {
-    const { files } = this.state;
-    const activeKey = `newTab${this.newTabIndex++}`;
-    files.push({ title: 'New Tab', content: 'Content of new Tab', key: activeKey });
-    this.setState({ files, activeKey });
-  };
-
-  remove = targetKey => {
-    let { activeKey } = this.state;
-    let lastIndex;
-    this.state.files.forEach((file, i) => {
-      if (file.key === targetKey) {
-        lastIndex = i - 1;
-      }
-    });
-    const files = this.state.files.filter(file => file.key !== targetKey);
-    if (files.length && activeKey === targetKey) {
-      if (lastIndex >= 0) {
-        activeKey = files[lastIndex].key;
-      } else {
-        activeKey = files[0].key;
-      }
+    constructor(props) {
+      super(props);
+      this.newTabIndex = 0;
+      const panes = [
+        { title: 'Tab 1', content: 'Content of Tab 1', key: '1',unsave: false },
+        { title: 'Tab 2', content: 'Content of Tab 2', key: '2',unsave: false },
+        {
+          title: 'Tab 3',
+          content: 'Content of Tab 3',
+          key: '3',
+          closable: false,
+          unsave: false
+        },
+      ];
+      this.state = {
+        activeKey: panes[0].key,
+        panes,
+      };
     }
-    this.setState({ files, activeKey });
-  };
-
-  render() {
-    return (
-      <Tabs
-        onChange={this.onChange}
-        activeKey={this.state.activeKey}
-        type="editable-card"
-        onEdit={this.onEdit}
-      >
-        {this.state.files.map(file => (
-          <Tabfile tab={file.title} key={file.key} closable={file.closable}>
-            {file.content}
-          </Tabfile>
-        ))}
-      </Tabs>
-    );
+  
+    onChange = activeKey => {
+      this.setState({ activeKey });
+    };
+  
+    onEdit = (targetKey, action) => {
+      this[action](targetKey);
+    };
+  
+    add = () => {
+      const { panes } = this.state;
+      const activeKey = `newTab${this.newTabIndex++}`;
+      panes.push({ title: 'New Tab', content: 'Content of new Tab', key: activeKey });
+      this.setState({ panes, activeKey });
+    };
+  
+    remove = targetKey => {
+      let { activeKey } = this.state;
+      let lastIndex;
+      this.state.panes.forEach((pane, i) => {
+        if (pane.key === targetKey) {
+          lastIndex = i - 1;
+        }
+      });
+      const panes = this.state.panes.filter(pane => pane.key !== targetKey);
+      if (panes.length && activeKey === targetKey) {
+        if (lastIndex >= 0) {
+          activeKey = panes[lastIndex].key;
+        } else {
+          activeKey = panes[0].key;
+        }
+      }
+      this.setState({ panes, activeKey });
+    };
+  
+    render() {
+      return (
+        <Tabs
+          onChange={this.onChange}
+          activeKey={this.state.activeKey}
+          type="editable-card"
+          onEdit={this.onEdit}
+        >
+          {this.state.panes.map(pane => (
+            <TabPane tab={pane.title} key={pane.key} closable={pane.closable}>
+              {pane.content}
+            </TabPane>
+          ))}
+        </Tabs>
+      );
+    }
   }
-}
+  
 
-TabList.propTypes = {
-    files: PropTypes.array,
-    activeId: PropTypes.string,
-    unsaveIds: PropTypes.array,
-    onTabClick: PropTypes.func,
-    onCloseTab: PropTypes.func
-}
+// TabList.propTypes = {
+//     files: PropTypes.array,
+//     activeId: PropTypes.string,
+//     unsaveIds: PropTypes.array,
+//     onTabClick: PropTypes.func,
+//     onCloseTab: PropTypes.func
+// }
 export default TabList

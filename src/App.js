@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-01-22 19:20:00
- * @LastEditTime : 2020-01-23 20:58:52
+ * @LastEditTime : 2020-01-23 23:49:00
  * @LastEditors  : Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \cloud-electron-docs\src\App.js
@@ -16,7 +16,7 @@ import './public/css/reset.css'
 import './public/css/theme-antd.less'
 import defaultFiles from './utils/defaultFiles'
 import defaultTab from './utils/defaultTab'
-const { Header, Footer, Sider, Content } = Layout;
+const { Footer, Sider, Content } = Layout;
 
 function App() {
   return (

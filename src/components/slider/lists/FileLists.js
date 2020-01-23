@@ -1,12 +1,4 @@
-/*
- * @Author: your name
- * @Date: 2020-01-22 19:20:00
- * @LastEditTime : 2020-01-23 20:59:10
- * @LastEditors  : Please set LastEditors
- * @Description: In User Settings Edit
- * @FilePath: \cloud-electron-docs\src\components\slider\lists\FileLists.js
- */
-import React, { useState } from 'react'
+import React, { useState,Fragment,useEffect } from 'react'
 import { Icon, Input } from 'antd'
 import PropTypes from 'prop-types'
 import './FileLists.less'
@@ -20,6 +12,11 @@ const FileLists = ({files,onFileClick,onSaveEdit,onFileDelete}) => {
  */
   const [editStatus, setEditStatus] = useState('')
   const [value, setValue] = useState('')
+  useEffect(() => {
+    document.addEventListener('contextmenu',(e) => {
+      console.log(e)
+    })
+  })
   return (
     <ul
     className="file-lists"
@@ -45,7 +42,7 @@ const FileLists = ({files,onFileClick,onSaveEdit,onFileDelete}) => {
           } 
           {
             (editStatus !== file.id) &&
-            <>
+            <Fragment>
               <Icon type="file-markdown" theme="filled"/>
               <b
               className="file-title"
@@ -71,7 +68,7 @@ const FileLists = ({files,onFileClick,onSaveEdit,onFileDelete}) => {
                 theme="filled" 
                 title='rename'
               />
-            </>
+            </Fragment>
           }
          </li> 
        ))
@@ -80,11 +77,11 @@ const FileLists = ({files,onFileClick,onSaveEdit,onFileDelete}) => {
   )
 }
 
-// FileLists.propTypes = {
-//   files: PropTypes.array,
-//   onFileClick: PropTypes.func,
-//   onSaveEdit: PropTypes.func,
-//   onFileDelete: PropTypes.func
-// }
+FileLists.propTypes = {
+  files: PropTypes.array,
+  onFileClick: PropTypes.func,
+  onSaveEdit: PropTypes.func,
+  onFileDelete: PropTypes.func
+}
 
 export default FileLists

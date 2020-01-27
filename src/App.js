@@ -1,7 +1,7 @@
 /*
- * @Author: your name
+ * @Author: Envas chris
  * @Date: 2020-01-22 19:20:00
- * @LastEditTime : 2020-01-23 23:49:00
+ * @LastEditTime : 2020-01-26 17:57:26
  * @LastEditors  : Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \cloud-electron-docs\src\App.js
@@ -16,6 +16,8 @@ import './public/css/reset.css'
 import './public/css/theme-antd.less'
 import defaultFiles from './utils/defaultFiles'
 import defaultTab from './utils/defaultTab'
+import SimpleMDE from "react-simplemde-editor";
+import "easymde/dist/easymde.min.css";
 const { Footer, Sider, Content } = Layout;
 
 function App() {
@@ -53,12 +55,11 @@ function App() {
         </div>
       </Sider>
       <Layout>
-        {/* <Header>
-        </Header> */}
         <Content>
           <TabList 
             files={defaultTab}
           />
+          <SimpleMDE />
         </Content>
         <Footer>Footer</Footer>
       </Layout>

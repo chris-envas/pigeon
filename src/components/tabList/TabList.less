@@ -1,0 +1,25 @@
+.ant-tag{
+    position: relative;
+    height: 30px;
+    line-height: 30px;
+    min-width: 100px;
+}
+.ant-tag .anticon-close{
+    position: absolute;
+    right: 4px;
+    top: 8px;
+}
+.anticon-save::after{
+    content: '';
+    display: block;
+    position: absolute;
+    right: 4px;
+    top: 8px;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: #f0f2f5;
+}
+.ant-tag:hover.anticon-save::after{
+    display: none;
+}

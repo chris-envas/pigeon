@@ -3,7 +3,7 @@ import { Icon, Input } from 'antd'
 import PropTypes from 'prop-types'
 import './FileLists.less'
 
-const FileLists = ({files,onFileClick,onSaveEdit,onFileDelete}) => {
+const FileLists = ({files,onFileClick,onSaveEdit,onFileDelete,activeFile_id}) => {
   /*
   * @files: original file data
   * @onFileClick: file click interaction
@@ -34,6 +34,7 @@ const FileLists = ({files,onFileClick,onSaveEdit,onFileDelete}) => {
      {
        files.map(file => (
         <li
+        className={activeFile_id === file.id ? 'active' : ''}
         onClick={(e) => {
           (editStatus !== file.id) && onFileClick(file.id)
         }}
@@ -43,15 +44,9 @@ const FileLists = ({files,onFileClick,onSaveEdit,onFileDelete}) => {
             <>  
               <div className="input-modal-global"
               onClick={(e) => {
-                if(file.isNew) {
-                  file.isNew = false
-                  onSaveEdit(file.id,value)
-                  setEditStatus('')
-                }else{
-                  e.stopPropagation()
-                  onSaveEdit(file.id,value)
-                  setEditStatus('')
-                }
+                e.stopPropagation()
+                onSaveEdit(file.id,value)
+                setEditStatus('')
               }}></div>
               <Input placeholder={ file.title ? file.title : '请输入文件名称'}  
                 onChange={(e) => {
@@ -60,15 +55,9 @@ const FileLists = ({files,onFileClick,onSaveEdit,onFileDelete}) => {
                 }}
                 onKeyDown={(e) => {
                   if(e.keyCode === 13) {
-                    if(file.isNew) {
-                      file.isNew = false
-                      onSaveEdit(file.id,value)
-                      setEditStatus('')
-                    }else{
-                      e.stopPropagation()
-                      onSaveEdit(file.id,value)
-                      setEditStatus('')
-                    }
+                    e.stopPropagation()
+                    onSaveEdit(file.id,value)
+                    setEditStatus('')
                   }
                 }}
               />

@@ -1,7 +1,7 @@
 /*
  * @Author: Envas chris
  * @Date: 2020-01-22 19:20:00
- * @LastEditTime : 2020-01-29 17:00:25
+ * @LastEditTime : 2020-01-29 19:15:13
  * @LastEditors  : Please set LastEditors
  * @Description: every component interaction
  * @FilePath: \cloud-electron-docs\src\App.js
@@ -48,6 +48,8 @@ function App() {
     if(!openedFile_ids.includes(file_id)) {
       setActiveFile_id(file_id)
       setOpenedFile_ids([...openedFile_ids,file_id])
+    }else{
+      setActiveFile_id(file_id)
     }
   }
   // tab click event
@@ -56,6 +58,10 @@ function App() {
   }
   // tab close event
   const onCloseTab = (file_id) => {
+    const isSave = openedFile_ids.includes(file_id)
+    if(isSave) {
+      alert('文件已修好是否保存！')
+    }
     // remove curent id from openFile_ids
     const newTabList = openedFile_ids.filter(open_id => open_id !== file_id)
     setOpenedFile_ids([...newTabList])
@@ -89,7 +95,10 @@ function App() {
     console.log(id,title)
     // loop through original file to update the title
     let newFiles = files.map(file => {
-      if(file.id === id) file.title = title
+      if(file.id === id) {
+        file.title = title
+        file.isNew = false
+      }
       return file
     })
     setFiles(newFiles)
@@ -130,6 +139,7 @@ function App() {
             onFileClick = {onFileClick}
             onFileDelete = {onFileDelete}
             onSaveEdit = {onSaveEdit}  
+            activeFile_id={activeFile_id}
             />
             <div className="left-panel_ground">
               <SliderButton 

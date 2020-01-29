@@ -5,18 +5,28 @@ import './FileLists.less'
 
 const FileLists = ({files,onFileClick,onSaveEdit,onFileDelete}) => {
   /*
- * @files: 文件列表
- * @onFileClick: 文件重命名
- * @onSaveEdit : 文件保存
- * @onFileDelete  : 文件删除
+  * @files: original file data
+  * @onFileClick: file click interaction
+  * @onSaveEdit : file save interaction
+  * @onFileDelete  : file delte interaction
  */
+  // file edit status
   const [editStatus, setEditStatus] = useState('')
+  // file data
   const [value, setValue] = useState('')
   useEffect(() => {
     document.addEventListener('contextmenu',(e) => {
       console.log(e)
     })
   })
+  useEffect(() => {
+    // judge new file 
+    const newFile = files.find(file => file.isNew)
+    if(newFile) {
+      setEditStatus(newFile.id)
+      // setValue(newFile.title)
+    }
+  },[files])
   return (
     <ul
     className="file-lists"
@@ -24,18 +34,42 @@ const FileLists = ({files,onFileClick,onSaveEdit,onFileDelete}) => {
      {
        files.map(file => (
         <li
+        onClick={(e) => {
+          (editStatus !== file.id) && onFileClick(file.id)
+        }}
         key={file.id}>
           {
             (editStatus === file.id) && 
             <>  
               <div className="input-modal-global"
-              onClick={() => {
-                onSaveEdit(file.id,value)
-                setEditStatus('')
+              onClick={(e) => {
+                if(file.isNew) {
+                  file.isNew = false
+                  onSaveEdit(file.id,value)
+                  setEditStatus('')
+                }else{
+                  e.stopPropagation()
+                  onSaveEdit(file.id,value)
+                  setEditStatus('')
+                }
               }}></div>
-              <Input placeholder={file.title}  
+              <Input placeholder={ file.title ? file.title : '请输入文件名称'}  
                 onChange={(e) => {
                   setValue(e.target.value)
+                  onSaveEdit(file.id,value)
+                }}
+                onKeyDown={(e) => {
+                  if(e.keyCode === 13) {
+                    if(file.isNew) {
+                      file.isNew = false
+                      onSaveEdit(file.id,value)
+                      setEditStatus('')
+                    }else{
+                      e.stopPropagation()
+                      onSaveEdit(file.id,value)
+                      setEditStatus('')
+                    }
+                  }
                 }}
               />
             </>
@@ -50,7 +84,8 @@ const FileLists = ({files,onFileClick,onSaveEdit,onFileDelete}) => {
                 {file.title}
               </b>
               <Icon 
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation()
                   onFileDelete(file.id)
                 }}
                 className="delete-icon" 
@@ -59,14 +94,14 @@ const FileLists = ({files,onFileClick,onSaveEdit,onFileDelete}) => {
                 title='delete file'
                 />
               <Icon 
-                onClick={() => {
-                  onFileClick(file.id)
-                  setEditStatus(file.id)
-                }}
                 className="click-icon"
                 type="edit" 
                 theme="filled" 
                 title='rename'
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setEditStatus(file.id)
+                }}
               />
             </Fragment>
           }

@@ -1,8 +1,8 @@
 /*
  * @Author: your name
  * @Date: 2020-01-22 19:20:00
- * @LastEditTime: 2020-01-25 21:01:47
- * @LastEditors: your name
+ * @LastEditTime : 2020-01-27 16:14:54
+ * @LastEditors  : Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \cloud-electron-docs\main.js
  */
@@ -22,5 +22,5 @@ app.on("ready",() => {
 	mainWindow.webContents.openDevTools()
 	let url = isDev ? 'http://localhost:3000/' : ''
 	if(url) mainWindow.loadURL(url)
-	Menu.setApplicationMenu(null)
+	// Menu.setApplicationMenu(null)
 })

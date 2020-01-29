@@ -1,1 +1,17 @@
-
+.tab-none{
+    min-height: 300px;
+    line-height: 300px;
+    text-align: center;
+    font-size: 26px;
+    color: #c5c5c5;
+}
+.left-panel{
+    min-height: 100vh;
+    position: relative;
+    background: #353535;
+}
+.left-panel_ground{
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}

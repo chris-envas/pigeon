@@ -1,34 +1,42 @@
 /*
  * @Author: Envas chris
  * @Date: 2020-01-22 19:20:00
- * @LastEditTime : 2020-01-29 19:15:13
+ * @LastEditTime : 2020-01-30 20:36:47
  * @LastEditors  : Please set LastEditors
  * @Description: every component interaction
  * @FilePath: \cloud-electron-docs\src\App.js
  */
 import React, {Fragment,useState} from 'react';
 import { Layout } from 'antd'
-
+// get universally unique identifier
 import uuidv4 from 'uuid/v4'
-
+// All  components
 import FileSearch from './components/slider/search/FileSearch'
 import FileLists from './components/slider/lists/FileLists'
 import SliderButton from './components/slider/button/SliderButton'
 import TabList from './components/tabList/TabList'
-
+// All css
 import './public/css/reset.css'
 import './public/css/common.css'
 import './public/css/theme-antd.less'
 import './App.css'
-
+// from util about function or data
 import defaultFiles from './utils/defaultFiles'
-
+import {flattenArr,enumToArr} from './utils/dataProcessing'
+import fileProcessing from './utils/fileProcessing'
+// edit
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 const { Sider, Content } = Layout;
+// require node module 
+const {join} = window.require('path')
+const {remote} = window.require('electron')
+
 function App() {
   //original file of data
   const [files,setFiles] = useState(defaultFiles)
+  // arr original file data to enum
+  const enumfile = flattenArr(files)
   // active file id
   const [activeFile_id,setActiveFile_id] = useState('')
   // open files id
@@ -39,10 +47,11 @@ function App() {
   const [searchedFiles, setSearchedFiles] = useState([])
   // List of opened tab 
   const openedFile = openedFile_ids.map(open_id => {
-    return files.find(file => file.id === open_id)
+    return enumfile[open_id]
   })
+  const savedLocationPath = remote.app.getPath('documents')
   // files in use
-  const activFile = files.find(file => file.id === activeFile_id)
+  const activFile = enumfile[activeFile_id]
   // left click event
   const onFileClick = (file_id) => {
     if(!openedFile_ids.includes(file_id)) {
@@ -72,36 +81,40 @@ function App() {
   }
   const fileChange = (activeFile_id,value) => {
     // loop through original file to update new file array
-    let newFiles = files.map(file => {
-      if(file.id === activeFile_id) {
-        file.body = value
-      }
-      return file
-    }) 
-    setFiles(newFiles)
+    enumfile[activeFile_id].body = value
+    setFiles(enumToArr(enumfile))
     if(!unSaveFile_ids.includes(activeFile_id)) {
       // check unsaved file to add new unsaved file
       setUnSaveFile_ids([...unSaveFile_ids,activeFile_id])
     }
   }
   const onFileDelete = (id) => {
-    //delete original data 
-    const newFiles = files.filter(file => file.id !== id)
-    setFiles(newFiles)
-    // delete opened tab 
-    onCloseTab(id)
-  }
-  const onSaveEdit = (id,title) => {
-    console.log(id,title)
-    // loop through original file to update the title
-    let newFiles = files.map(file => {
-      if(file.id === id) {
-        file.title = title
-        file.isNew = false
-      }
-      return file
+    //delete enumfile data 
+    fileProcessing.deleteFile(join(savedLocationPath,`${enumfile[id].title}.md`))
+    .then(() => {
+      delete enumfile[id]
+      setFiles(enumToArr(enumfile))
+      // delete opened tab 
+      onCloseTab(id)
     })
-    setFiles(newFiles)
+  }
+  const onSaveEdit = (id,title,isNew) => {
+    // loop through original file to update the title
+    if(isNew) {
+      fileProcessing.writeFile(join(savedLocationPath,`${title}.md`),enumfile[id].body)
+      .then(() => {
+        enumfile[id].title = title
+        enumfile[id].isNew = false
+        setFiles(enumToArr(enumfile))
+      })
+    }else{
+      fileProcessing.renameFile(join(savedLocationPath,`${enumfile[id].title}.md`),join(savedLocationPath,`${title}.md`))
+      .then(() => {
+        enumfile[id].title = title
+        enumfile[id].isNew = false
+        setFiles(enumToArr(enumfile))
+      })
+    }
   }
   const onFileSearch = keyword => {
     if(keyword) {
@@ -118,13 +131,21 @@ function App() {
       ...files,
       {
         id: newFile_id,
-        title: '',
+        title: 'Untitled.md',
         body: '',
         create: +new Date(),
         isNew: true
       }
     ]
     setFiles(newFiles)
+  }
+  const saveCurrentFile = () => {
+    fileProcessing.writeFile(join(savedLocationPath, `${activFile.title}.md`),
+      activFile.body
+    )
+    .then(() => {
+      setUnSaveFile_ids(unSaveFile_ids.filter(unSaveFile_id => unSaveFile_id !== activFile.id))
+    })
   }
   return (
     <div className="App">
@@ -151,6 +172,10 @@ function App() {
               onclick={() => {
                 console.log('导入')
               }}/>
+              <SliderButton 
+              text='保存'
+              onclick={saveCurrentFile}
+              />
             </div>
         </div>
       </Sider>
@@ -182,7 +207,6 @@ function App() {
             </Fragment>
           }
         </Content>
-        {/* <Footer>Footer</Footer> */}
       </Layout>
     </Layout>
     </div>

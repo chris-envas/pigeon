@@ -1,5 +1,6 @@
 import React from 'react'
 import { Tag } from 'antd';
+import PropTypes from 'prop-types'
 import './TabList.less'
 
 const style = {
@@ -40,6 +41,14 @@ const TabList = ({files,unSaveFile_ids,onTabClick,onCloseTab,activeFile_id}) => 
            }
        </div>
     )
+}
+
+TabList.propTypes = {
+    files: PropTypes.array,
+    unSaveFile_id: PropTypes.array,
+    onCloseTab: PropTypes.func,
+    activeFile_id: PropTypes.array,
+    onTabClick: PropTypes.func
 }
 
 export default TabList

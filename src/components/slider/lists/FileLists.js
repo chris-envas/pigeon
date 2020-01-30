@@ -15,12 +15,13 @@ const FileLists = ({files,onFileClick,onSaveEdit,onFileDelete,activeFile_id}) =>
   // file data
   const [value, setValue] = useState('')
   useEffect(() => {
+    //I going to add new feature in the futrue
     document.addEventListener('contextmenu',(e) => {
       console.log(e)
     })
   })
   useEffect(() => {
-    // judge new file 
+    // if the file is new , must be set to edit  
     const newFile = files.find(file => file.isNew)
     if(newFile) {
       setEditStatus(newFile.id)
@@ -45,18 +46,18 @@ const FileLists = ({files,onFileClick,onSaveEdit,onFileDelete,activeFile_id}) =>
               <div className="input-modal-global"
               onClick={(e) => {
                 e.stopPropagation()
-                onSaveEdit(file.id,value)
+                onSaveEdit(file.id,value,file.isNew)
                 setEditStatus('')
               }}></div>
               <Input placeholder={ file.title ? file.title : '请输入文件名称'}  
                 onChange={(e) => {
                   setValue(e.target.value)
-                  onSaveEdit(file.id,value)
+                  // onSaveEdit(file.id,value)
                 }}
                 onKeyDown={(e) => {
                   if(e.keyCode === 13) {
                     e.stopPropagation()
-                    onSaveEdit(file.id,value)
+                    onSaveEdit(file.id,value,file.isNew)
                     setEditStatus('')
                   }
                 }}

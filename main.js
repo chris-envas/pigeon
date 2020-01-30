@@ -1,7 +1,7 @@
 /*
  * @Author: your name
  * @Date: 2020-01-22 19:20:00
- * @LastEditTime : 2020-01-27 16:14:54
+ * @LastEditTime : 2020-01-30 17:09:24
  * @LastEditors  : Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \cloud-electron-docs\main.js
@@ -13,7 +13,7 @@ const mainOption = {
 	width: 1200,
 	height: 800,
 	webPreferences: {
-		nodeIntergration: true
+		nodeIntegration: true
 	}
 }
 

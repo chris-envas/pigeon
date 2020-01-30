@@ -1,14 +1,14 @@
 /*
  * @Author: your name
  * @Date: 2020-01-22 19:20:00
- * @LastEditTime : 2020-01-29 17:00:57
+ * @LastEditTime : 2020-01-30 20:48:23
  * @LastEditors  : Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \cloud-electron-docs\src\components\slider\Search\FileSearch.js
  */
 import React from 'react'
 import {Input } from 'antd'
-
+import PropTypes from 'prop-types'
 const { Search } = Input
 
 const FileSearch = ({onFileSearch}) => {
@@ -28,6 +28,10 @@ const FileSearch = ({onFileSearch}) => {
             />
         </div>
     )
+}
+
+FileSearch.propTypes = {
+    onFileSearch: PropTypes.func
 }
 
 export default FileSearch

@@ -1,7 +1,7 @@
 /*
  * @Author: Envas chris
  * @Date: 2020-01-22 19:20:00
- * @LastEditTime : 2020-02-01 17:24:29
+ * @LastEditTime : 2020-02-01 20:30:26
  * @LastEditors  : Please set LastEditors
  * @Description: every component interaction
  * @FilePath: \cloud-electron-docs\src\App.js
@@ -102,9 +102,6 @@ function App() {
       }
       dialog.showMessageBox(option)
       .then(result => {
-        if(!result.response) {
-          saveCurrentFile()
-        }
         const newUnSaveFile_ids = unSaveFile_ids.filter(unSaveFile_id => unSaveFile_id !==  file_id)
         setUnSaveFile_ids(newUnSaveFile_ids)
         // remove curent id from openFile_ids
@@ -113,6 +110,16 @@ function App() {
         // if still tab-list , set the active to the last opened tab
         if(openedFile_ids.length) {
           setActiveFile_id(openedFile_ids[0])
+        }
+        if(!result.response) {
+          // new file save
+          saveCurrentFile()
+        }
+        else{
+          // if new file no save we need update files
+          const { [file_id]: value, ...leftOver} = enumfile
+          dealWithSaveFileStore(enumToArr(leftOver))
+          setFiles(enumToArr(leftOver))
         }
       })
     }else{
@@ -143,9 +150,12 @@ function App() {
       delete enumfile[id]
       // delete opened tab 
       onCloseTab(id)
+      // update electron store
       dealWithSaveFileStore(enumToArr(enumfile))
+      // update files
       setFiles(enumToArr(enumfile))
       return
+      // it is dangererous to delete directly
       fileProcessing.deleteFile(getFile.path)
       .then(() => {
       })
@@ -154,8 +164,7 @@ function App() {
   const onSaveEditTitle = (id,title,isNew) => {
     // loop through original file to update the title
     const {path} = files.find(file => file.id === id)
-    const checkFileRepeatTitle = files.filter(file => file.title === title)
-    if(title && !checkFileRepeatTitle.length) {
+    if(title) {
       const newPath = join(dirname(path),`${title}.md`)
       if(isNew) {
         // if new file we should update files and save electron store 
@@ -163,18 +172,9 @@ function App() {
         enumfile[id].isNew = false
         dealWithSaveFileStore(enumToArr(enumfile))
         setFiles(enumToArr(enumfile))
-        return
-        // fileProcessing.writeFile(newPath,enumfile[id].body)
-        // .then(() => {
-        //   enumfile[id].title = title
-        //   enumfile[id].isNew = false
-        //   enumfile[id].path = newPath
-        //   dealWithSaveFileStore(enumToArr(enumfile))
-        //   setFiles(enumToArr(enumfile))
-        // })
       }else{
-        const oldPath = join(dirname(path),`${enumfile[id].title}.md`)
-        fileProcessing.renameFile(oldPath,newPath)
+        // if old file we directly change file name 
+        fileProcessing.renameFile(path,newPath)
         .then(() => {
           enumfile[id].title = title
           enumfile[id].isNew = false
@@ -186,8 +186,8 @@ function App() {
     }else{
       const {isNew} = files.find(file =>  file.id === id)
       if(isNew) {
-        dialog.showErrorBox('错误提示','文件名称不能为空或已经有相同文件')
-        // alert('文件名称不能为空或已经有相同文件')
+        dialog.showErrorBox('错误提示','文件名称不能为空')
+        // amazingly extended
         const { [id]: value, ...afterDelete} = enumfile
         // delete enumfile[id]
         setFiles(enumToArr(afterDelete))
@@ -221,16 +221,14 @@ function App() {
   }
   const saveCurrentFile = () => {
     const {path,title} = files.find(file => file.id === activFile.id)
-    console.log(path)
+    console.log('saveCurrentFile',path)
     if(path === '') {
       dialog.showSaveDialog({
         title: 'create file',
         defaultPath: join(savedLocationPath,title),
       })
       .then(result => {
-        console.log(result)
         if(result.filePath) {
-          const alradyFile = files.find(file => file.path === result.filePath)
           fileProcessing.writeFile(result.filePath,activFile.body)
           .then(() => {
             const newFiles = files.map(file => {
@@ -239,13 +237,16 @@ function App() {
               }
               return file
             })
-            console.log(newFiles)
             setFiles(newFiles)
             setUnSaveFile_ids(unSaveFile_ids.filter(unSaveFile_id => unSaveFile_id !== activFile.id))
           })
         }
       })
-      return 
+    }else{
+      fileProcessing.writeFile(path,activFile.body)
+      .then(() => {
+        setUnSaveFile_ids(unSaveFile_ids.filter(unSaveFile_id => unSaveFile_id !== activFile.id))
+      })
     }
   }
   const importFiles = () => {
@@ -335,7 +336,7 @@ function App() {
                 activeFile_id={activeFile_id}
               /> 
               <SimpleMDE
-              key={activFile&&activFile.id} 
+              key={activFile && activFile.id} 
               value={activFile && activFile.body}
               onChange={value => {
                 fileChange(activFile.id,value)

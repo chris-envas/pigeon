@@ -3,11 +3,11 @@ import { Icon, Input } from 'antd'
 import PropTypes from 'prop-types'
 import './FileLists.less'
 
-const FileLists = ({files,onFileClick,onSaveEdit,onFileDelete,activeFile_id}) => {
+const FileLists = ({files,onFileClick,onSaveEditTitle,onFileDelete,activeFile_id}) => {
   /*
   * @files: original file data
   * @onFileClick: file click interaction
-  * @onSaveEdit : file save interaction
+  * @onSaveEditTitle : file save interaction
   * @onFileDelete  : file delte interaction
  */
   // file edit status
@@ -46,18 +46,17 @@ const FileLists = ({files,onFileClick,onSaveEdit,onFileDelete,activeFile_id}) =>
               <div className="input-modal-global"
               onClick={(e) => {
                 e.stopPropagation()
-                onSaveEdit(file.id,value,file.isNew)
+                onSaveEditTitle(file.id,value,file.isNew)
                 setEditStatus('')
               }}></div>
               <Input placeholder={ file.title ? file.title : '请输入文件名称'}  
                 onChange={(e) => {
                   setValue(e.target.value)
-                  // onSaveEdit(file.id,value)
                 }}
                 onKeyDown={(e) => {
                   if(e.keyCode === 13) {
                     e.stopPropagation()
-                    onSaveEdit(file.id,value,file.isNew)
+                    onSaveEditTitle(file.id,value,file.isNew)
                     setEditStatus('')
                   }
                 }}
@@ -105,7 +104,7 @@ const FileLists = ({files,onFileClick,onSaveEdit,onFileDelete,activeFile_id}) =>
 FileLists.propTypes = {
   files: PropTypes.array,
   onFileClick: PropTypes.func,
-  onSaveEdit: PropTypes.func,
+  onSaveEditTitle: PropTypes.func,
   onFileDelete: PropTypes.func
 }
 

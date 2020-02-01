@@ -1,7 +1,7 @@
 /*
  * @Author: Envas chris
  * @Date: 2020-01-22 19:20:00
- * @LastEditTime : 2020-01-30 20:36:47
+ * @LastEditTime : 2020-02-01 17:24:29
  * @LastEditors  : Please set LastEditors
  * @Description: every component interaction
  * @FilePath: \cloud-electron-docs\src\App.js
@@ -21,7 +21,6 @@ import './public/css/common.css'
 import './public/css/theme-antd.less'
 import './App.css'
 // from util about function or data
-import defaultFiles from './utils/defaultFiles'
 import {flattenArr,enumToArr} from './utils/dataProcessing'
 import fileProcessing from './utils/fileProcessing'
 // edit
@@ -29,14 +28,31 @@ import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 const { Sider, Content } = Layout;
 // require node module 
-const {join} = window.require('path')
+const {join,basename,extname,dirname} = window.require('path')
 const {remote} = window.require('electron')
-
+const {dialog,app} = remote
+// electron store 
+const Store = window.require('electron-store')
+const fileStore = new Store()
+const dealWithSaveFileStore = (file) => {
+  // dealWith cache file in electron-store
+  const saveElectronStoreFile = file.reduce((result, file) => {
+    const {id, path, title, create} = file
+    result[id] = {
+      id,
+      path,
+      title,
+      create
+    }
+    return result
+  },{})
+  fileStore.set('files',saveElectronStoreFile)
+}
 function App() {
   //original file of data
-  const [files,setFiles] = useState(defaultFiles)
-  // arr original file data to enum
-  const enumfile = flattenArr(files)
+  const [files,setFiles] = useState(enumToArr(fileStore.get('files')) || [])
+  // Arrys to enumerate to help munipulate file faster
+  const enumfile = flattenArr(files) || {}
   // active file id
   const [activeFile_id,setActiveFile_id] = useState('')
   // open files id
@@ -49,16 +65,25 @@ function App() {
   const openedFile = openedFile_ids.map(open_id => {
     return enumfile[open_id]
   })
-  const savedLocationPath = remote.app.getPath('documents')
-  // files in use
+  const savedLocationPath = app.getPath('documents')
+  // currently file 
   const activFile = enumfile[activeFile_id]
-  // left click event
   const onFileClick = (file_id) => {
+    // fileList click event
+    const currentFile = enumfile[file_id]
+    if(!currentFile.idLoading) {
+      if(enumfile[file_id].path) {
+        fileProcessing.readFile(enumfile[file_id].path).then(value => {
+          const newFile = {...enumfile[file_id],body:value,isLoading: true}
+          setFiles(enumToArr({...enumfile,[file_id]: newFile}))
+        })
+      }
+    }
+    // set current file 
+    setActiveFile_id(file_id)
     if(!openedFile_ids.includes(file_id)) {
-      setActiveFile_id(file_id)
+      // set currently open file
       setOpenedFile_ids([...openedFile_ids,file_id])
-    }else{
-      setActiveFile_id(file_id)
     }
   }
   // tab click event
@@ -67,16 +92,39 @@ function App() {
   }
   // tab close event
   const onCloseTab = (file_id) => {
-    const isSave = openedFile_ids.includes(file_id)
+    const isSave = unSaveFile_ids.includes(file_id)
     if(isSave) {
-      alert('文件已修好是否保存！')
-    }
-    // remove curent id from openFile_ids
-    const newTabList = openedFile_ids.filter(open_id => open_id !== file_id)
-    setOpenedFile_ids([...newTabList])
-    // if still tab-list , set the active to the last opened tab
-    if(openedFile_ids.length) {
-      setActiveFile_id(openedFile_ids[0])
+      const option = {
+        type: 'info',
+        title: '信息',
+        message: '是否保存文件',
+        buttons: ['yes','no']
+      }
+      dialog.showMessageBox(option)
+      .then(result => {
+        if(!result.response) {
+          saveCurrentFile()
+        }
+        const newUnSaveFile_ids = unSaveFile_ids.filter(unSaveFile_id => unSaveFile_id !==  file_id)
+        setUnSaveFile_ids(newUnSaveFile_ids)
+        // remove curent id from openFile_ids
+        const newTabList = openedFile_ids.filter(open_id => open_id !== file_id)
+        setOpenedFile_ids([...newTabList])
+        // if still tab-list , set the active to the last opened tab
+        if(openedFile_ids.length) {
+          setActiveFile_id(openedFile_ids[0])
+        }
+      })
+    }else{
+      const newUnSaveFile_ids = unSaveFile_ids.filter(unSaveFile_id => unSaveFile_id !==  file_id)
+        setUnSaveFile_ids(newUnSaveFile_ids)
+        // remove curent id from openFile_ids
+        const newTabList = openedFile_ids.filter(open_id => open_id !== file_id)
+        setOpenedFile_ids([...newTabList])
+        // if still tab-list , set the active to the last opened tab
+        if(openedFile_ids.length) {
+          setActiveFile_id(openedFile_ids[0])
+        }
     }
   }
   const fileChange = (activeFile_id,value) => {
@@ -89,31 +137,61 @@ function App() {
     }
   }
   const onFileDelete = (id) => {
-    //delete enumfile data 
-    fileProcessing.deleteFile(join(savedLocationPath,`${enumfile[id].title}.md`))
-    .then(() => {
+    //delete file data and update electron store
+    const getFile = files.find(file => file.id === id)
+    if(getFile) {
       delete enumfile[id]
-      setFiles(enumToArr(enumfile))
       // delete opened tab 
       onCloseTab(id)
-    })
+      dealWithSaveFileStore(enumToArr(enumfile))
+      setFiles(enumToArr(enumfile))
+      return
+      fileProcessing.deleteFile(getFile.path)
+      .then(() => {
+      })
+    }
   }
-  const onSaveEdit = (id,title,isNew) => {
+  const onSaveEditTitle = (id,title,isNew) => {
     // loop through original file to update the title
-    if(isNew) {
-      fileProcessing.writeFile(join(savedLocationPath,`${title}.md`),enumfile[id].body)
-      .then(() => {
+    const {path} = files.find(file => file.id === id)
+    const checkFileRepeatTitle = files.filter(file => file.title === title)
+    if(title && !checkFileRepeatTitle.length) {
+      const newPath = join(dirname(path),`${title}.md`)
+      if(isNew) {
+        // if new file we should update files and save electron store 
         enumfile[id].title = title
         enumfile[id].isNew = false
+        dealWithSaveFileStore(enumToArr(enumfile))
         setFiles(enumToArr(enumfile))
-      })
+        return
+        // fileProcessing.writeFile(newPath,enumfile[id].body)
+        // .then(() => {
+        //   enumfile[id].title = title
+        //   enumfile[id].isNew = false
+        //   enumfile[id].path = newPath
+        //   dealWithSaveFileStore(enumToArr(enumfile))
+        //   setFiles(enumToArr(enumfile))
+        // })
+      }else{
+        const oldPath = join(dirname(path),`${enumfile[id].title}.md`)
+        fileProcessing.renameFile(oldPath,newPath)
+        .then(() => {
+          enumfile[id].title = title
+          enumfile[id].isNew = false
+          enumfile[id].path = newPath
+          dealWithSaveFileStore(enumToArr(enumfile))
+          setFiles(enumToArr(enumfile))
+        })
+      }
     }else{
-      fileProcessing.renameFile(join(savedLocationPath,`${enumfile[id].title}.md`),join(savedLocationPath,`${title}.md`))
-      .then(() => {
-        enumfile[id].title = title
-        enumfile[id].isNew = false
-        setFiles(enumToArr(enumfile))
-      })
+      const {isNew} = files.find(file =>  file.id === id)
+      if(isNew) {
+        dialog.showErrorBox('错误提示','文件名称不能为空或已经有相同文件')
+        // alert('文件名称不能为空或已经有相同文件')
+        const { [id]: value, ...afterDelete} = enumfile
+        // delete enumfile[id]
+        setFiles(enumToArr(afterDelete))
+      }
     }
   }
   const onFileSearch = keyword => {
@@ -134,19 +212,80 @@ function App() {
         title: 'Untitled.md',
         body: '',
         create: +new Date(),
-        isNew: true
+        isNew: true,
+        path: ''
       }
     ]
+    console.log('newFiles',newFiles)
     setFiles(newFiles)
   }
   const saveCurrentFile = () => {
-    fileProcessing.writeFile(join(savedLocationPath, `${activFile.title}.md`),
-      activFile.body
-    )
-    .then(() => {
-      setUnSaveFile_ids(unSaveFile_ids.filter(unSaveFile_id => unSaveFile_id !== activFile.id))
+    const {path,title} = files.find(file => file.id === activFile.id)
+    console.log(path)
+    if(path === '') {
+      dialog.showSaveDialog({
+        title: 'create file',
+        defaultPath: join(savedLocationPath,title),
+      })
+      .then(result => {
+        console.log(result)
+        if(result.filePath) {
+          const alradyFile = files.find(file => file.path === result.filePath)
+          fileProcessing.writeFile(result.filePath,activFile.body)
+          .then(() => {
+            const newFiles = files.map(file => {
+              if(file.id === activFile.id) {
+                file.path = result.filePath
+              }
+              return file
+            })
+            console.log(newFiles)
+            setFiles(newFiles)
+            setUnSaveFile_ids(unSaveFile_ids.filter(unSaveFile_id => unSaveFile_id !== activFile.id))
+          })
+        }
+      })
+      return 
+    }
+  }
+  const importFiles = () => {
+    const options = {
+      title: 'Choose import Markdown file',
+      properties: ['openFile','multiSelections'],
+      filters: [
+        {
+          name: 'Markdown files', extensions: ['md']
+        }
+      ]
+    }
+    dialog.showOpenDialog(options)
+    .then(result => {
+      if(Array.isArray(result.filePaths)) {
+        // determine if the file already exists
+        const filterReadPaths = result.filePaths.filter(path => {
+          const jugementFile = files.find(file => file.path === path)
+          return !jugementFile
+        })
+        const importFiles = filterReadPaths.map(path => {
+          return {
+            id: uuidv4(),
+            title: basename(path,extname(path)),
+            path
+          }
+        })
+        dealWithSaveFileStore([...files,...importFiles])
+        setFiles([...files,...importFiles])
+        if(importFiles.length > 0) {
+          dialog.showMessageBox({
+            type:'info',
+            title: '提示',
+            message: `成功导入${importFiles.length}个文件`
+          })
+        }
+      }
     })
   }
+
   return (
     <div className="App">
      <Layout>
@@ -156,10 +295,10 @@ function App() {
             <FileSearch 
             onFileSearch={onFileSearch}/> 
             <FileLists 
-            files={searchedFiles.length > 0 ?  searchedFiles : files}
+            files={searchedFiles.length > 0 ?  searchedFiles : files.length > 0 ? files : []}
             onFileClick = {onFileClick}
             onFileDelete = {onFileDelete}
-            onSaveEdit = {onSaveEdit}  
+            onSaveEditTitle = {onSaveEditTitle}  
             activeFile_id={activeFile_id}
             />
             <div className="left-panel_ground">
@@ -169,9 +308,7 @@ function App() {
               onclick={createNewFile}/>
               <SliderButton 
               text='导入'
-              onclick={() => {
-                console.log('导入')
-              }}/>
+              onclick={importFiles}/>
               <SliderButton 
               text='保存'
               onclick={saveCurrentFile}

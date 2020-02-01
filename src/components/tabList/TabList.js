@@ -47,7 +47,7 @@ TabList.propTypes = {
     files: PropTypes.array,
     unSaveFile_id: PropTypes.array,
     onCloseTab: PropTypes.func,
-    activeFile_id: PropTypes.array,
+    activeFile_id: PropTypes.string,
     onTabClick: PropTypes.func
 }
 

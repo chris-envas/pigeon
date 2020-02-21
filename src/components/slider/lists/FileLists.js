@@ -1,9 +1,11 @@
-import React, { useState,Fragment,useEffect } from 'react'
+import React, { useState,Fragment,useEffect} from 'react'
 import { Icon, Input } from 'antd'
 import PropTypes from 'prop-types'
 import './FileLists.less'
+import useMenuFileList from '../../hooks/useMenuFileList'
+import {getParentNode} from '../../../utils/domProcessing'
 
-const FileLists = ({files,onFileClick,onSaveEditTitle,onFileDelete,activeFile_id}) => {
+const FileLists = ({files,onFileClick,onSaveEditTitle,onFileDelete,pullCloudFile,activeFile_id}) => {
   /*
   * @files: original file data
   * @onFileClick: file click interaction
@@ -14,12 +16,35 @@ const FileLists = ({files,onFileClick,onSaveEditTitle,onFileDelete,activeFile_id
   const [editStatus, setEditStatus] = useState('')
   // file data
   const [value, setValue] = useState('')
-  useEffect(() => {
-    //I going to add new feature in the futrue
-    document.addEventListener('contextmenu',(e) => {
-      console.log(e)
-    })
-  })
+  // menu options
+  const clickElement = useMenuFileList([{
+    label:'重命名 (rename)',
+    click: () => {
+      const getFileItem = getParentNode(clickElement, 'file-item')
+      if(getFileItem) {
+        const file_id = getFileItem.getAttribute('data-id')
+        setEditStatus(file_id)
+      }
+    }
+  },{
+    label:'删除 (delete)',
+    click: () => {
+      const getFileItem = getParentNode(clickElement, 'file-item')
+      if(getFileItem) {
+        const file_id = getFileItem.getAttribute('data-id')
+        onFileDelete(file_id)
+      }
+    }
+  },{
+    label: '拉取 (pull)',
+    click: () => {
+      const getFileItem = getParentNode(clickElement, 'file-item')
+      if(getFileItem) {
+        const file_id = getFileItem.getAttribute('data-id')
+        pullCloudFile(file_id)
+      }
+    }
+  }],'.file-lists',[files])
   useEffect(() => {
     // if the file is new , must be set to edit  
     const newFile = files.find(file => file.isNew)
@@ -35,11 +60,14 @@ const FileLists = ({files,onFileClick,onSaveEditTitle,onFileDelete,activeFile_id
      {
        files.map(file => (
         <li
-        className={activeFile_id === file.id ? 'active' : ''}
+        className={[(activeFile_id === file.id ? 'active file-item' : 'file-item')]}
         onClick={(e) => {
           (editStatus !== file.id) && onFileClick(file.id)
         }}
-        key={file.id}>
+        key={file.id}
+        data-id={file.id}
+        data-title={file.title}
+        >
           {
             (editStatus === file.id) && 
             <>  
@@ -72,7 +100,7 @@ const FileLists = ({files,onFileClick,onSaveEditTitle,onFileDelete,activeFile_id
               title={file.title}>
                 {file.title}
               </b>
-              <Icon 
+             {/* <Icon 
                 onClick={(e) => {
                   e.stopPropagation()
                   onFileDelete(file.id)
@@ -81,7 +109,8 @@ const FileLists = ({files,onFileClick,onSaveEditTitle,onFileDelete,activeFile_id
                 type="delete" 
                 theme="filled" 
                 title='delete file'
-                />
+                /> */}
+              { /* 
               <Icon 
                 className="click-icon"
                 type="edit" 
@@ -91,7 +120,7 @@ const FileLists = ({files,onFileClick,onSaveEditTitle,onFileDelete,activeFile_id
                   e.stopPropagation()
                   setEditStatus(file.id)
                 }}
-              />
+              /> */}
             </Fragment>
           }
          </li> 

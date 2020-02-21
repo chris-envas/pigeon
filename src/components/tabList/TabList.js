@@ -1,39 +1,50 @@
+/*
+ * @Author: your name
+ * @Date: 2020-01-23 19:40:30
+ * @LastEditTime : 2020-02-13 18:29:53
+ * @LastEditors  : Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \cloud-electron-docs\src\components\tabList\TabList.js
+ */
 import React from 'react'
 import { Tag } from 'antd';
 import PropTypes from 'prop-types'
 import './TabList.less'
+import { getParentNode } from '../../utils/domProcessing'
 
-const style = {
-    minHeight: 30
-}
+
 const TabList = ({files,unSaveFile_ids,onTabClick,onCloseTab,activeFile_id}) => {
     return (
        <div
-        style={style}>
+       style={{maxHeight:30}}>
            {    
             files.map((file,index) => 
                 <Tag 
+                id={file.id}
+                key={file.id}
                 className={
                     [
-                        activeFile_id === file.id ? 'click tab-list_item' : '',
+                        activeFile_id === file.id ? 'click tab-list_item' : 'tab-list_item',
                         unSaveFile_ids.includes(file.id) ? ' anticon-save' : ''
                     ]
                 }
                 closable
                 onClose={(e) => { 
-                    let tabItem = document.querySelector('.tab-list_item')
-                    let id = tabItem.getAttribute('id')
-                    if(id)  onCloseTab(id)
+                    let tabItem = getParentNode(e.target,'tab-list_item')
+                    console.log('tabItem',tabItem)
+                    let id = tabItem.getAttribute('id') 
+                    if(id)  {
+                        onCloseTab(id)
+                    }
                 }}
                 onClick={(e) => {
                     let id = e.target.parentNode.getAttribute('id')
                     onTabClick(id)
                 }}
-                id={file.id}
-                key={index}
                 >
                 <div
-                className="out-range">
+                    className="out-range"
+                >
                     {file.title}
                 </div>
                 </Tag>

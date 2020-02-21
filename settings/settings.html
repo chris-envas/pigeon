@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>设置</title>
+</head>
+<style>
+    /* Set height of body and the document to 100% to enable "full page tabs" */
+    body,
+    html {
+        height: 100%;
+        margin: 0;
+        font-family: Arial;
+
+    }
+    .settings{
+        padding: 10px 20px
+    }
+    /* Style tab links */
+    .tablink {
+        border: none;
+        border-top: 1px solid #ddd;
+        border-left: 1px solid #ddd;
+        border-right: 1px solid #ddd;
+        outline: none;
+        cursor: pointer;
+        padding: 10px 12px;
+        font-size: 14px;
+        width: 25%;
+        display: inline-block;
+        background: #fff;
+    }
+    .tablink.active{
+        background-color: #353535;
+        color: #fff;
+    }
+    .tablink:hover {
+        background-color: #353535;
+        color: #fff;
+    }
+
+    /* Style the tab content (and add height:100% for full page content) */
+    .tabcontent {
+        display: none;
+        padding: 10px 10px;
+        height: 100%;
+    }
+
+    .tabcontent .item {
+        margin-bottom: 20px;
+    }
+
+    .tabcontent .item input {
+        padding: 5px;
+        height: 15px;
+        width: 70%;
+    }
+
+    .tabcontent .item label {
+        background: #353535;
+        padding: 5px 8px;
+        box-sizing: border-box;
+        color: #ffffff;
+        font-size: 12px;
+        display: inline-block;
+    }
+
+    #qiniu,
+    #file {
+        min-height: 286px;
+        border-top: 1px solid #ddd;
+    }
+
+    #acHelp {
+        padding: 10px 0px;
+        color: #e82c2c;
+    }
+
+    #save_btn {
+        border: none;
+        background: #353535;
+        color: #ffffff;
+        padding: 10px 20px;
+    }
+
+    .btn-outline-primary {
+        border: none;
+        background: #353535;
+        color: #fff;
+        padding: 10px 20px;
+    }
+    .btn-primary{
+        padding: 10px 30px;
+        border: none;
+        color: #fff;
+        background: #353535;
+        cursor: pointer;
+    }
+</style>
+
+<body>
+    <div class="settings">
+        <h2>设置</h2>
+        <div>
+            <button class="tablink" onclick="openPage('qiniu', this, '#353535')" id="defaultOpen">七牛云配置</button>
+            <button class="tablink" onclick="openPage('file', this, '#353535')" id="defaultOpen">文件存储</button>
+        </div>
+        <div id="qiniu" class="tabcontent">
+            <div class="item">
+                <div id="acHelp" class="form-text text-muted">(温馨提示：请前往七牛云密钥管理下查看)</div>
+                <label for="accessKey" class="">Access Key</label>
+                <div class="col-9">
+                    <input type="text" class="form-control" id="accessKey" placeholder="Access Key">
+                </div>
+            </div>
+            <div class="item">
+                <label for="secretKey" class="">Secret Key</label>
+                <div class="col-9">
+                    <input type="password" class="form-control" id="secretKey" placeholder="Secret Key">
+                </div>
+            </div>
+            <div class="item">
+                <label for="bucketName" class="">Bucket名称</label>
+                <div class="col-9">
+                    <input type="text" class="form-control" id="bucketName" placeholder="您所创建的云仓库名称">
+                </div>
+            </div>
+        </div>
+        <div id="file" class="tabcontent">
+            <div class="item">
+                <label for="exampleInputPassword1">选择文件存储位置</label>
+                <div class="input-group-append">
+                    <input type="text" id="savedFileLocation" class="form-control" placeholder="当前存储地址" readonly>
+                    <div style="margin-top: 20px;">
+                        <button class="btn btn-outline-primary" type="button" id="select-new-location">选择新的位置</button>
+                        <button class="btn btn-outline-primary" type="button" id="clean-new-location">清除默认路径</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button type="submit"  class="btn btn-primary save-config">保存</button>
+    </div>
+    <script>
+        const {
+            remote,
+            ipcRenderer
+        } = require('electron')
+        const Store = require('electron-store')
+        const settingsStore = new Store({name: 'Settings'})
+        const $ = (selector) => {
+            const result = document.querySelectorAll(selector)
+            return result.length > 1 ? result : result[0]
+        }
+        const qiniuArr = ['#savedFileLocation','#accessKey', '#secretKey', '#bucketName']
+        document.addEventListener('DOMContentLoaded', () => {
+            let savedLocation = settingsStore.get('savedFileLocation')
+            qiniuArr.forEach(selector => {
+                if($(selector)) {
+                    let savedValue = settingsStore.get(selector.substr(1))
+                    if(savedValue) {
+                        $(selector).value = savedValue
+                    }
+                }
+            })
+            if (savedLocation) {
+                $('#savedFileLocation').value = savedLocation
+            }
+            $('#select-new-location').addEventListener('click', () => {
+                remote.dialog.showOpenDialog({
+                    properties: ['openDirectory'],
+                    message: '选择文件的存储路径',
+                }).then((path) => {
+                    if (Array.isArray(path.filePaths) && path.filePaths.length > 0) {
+                        $('#savedFileLocation').value = path.filePaths[0]
+                    }
+                })
+            })
+            $('#clean-new-location').addEventListener('click',() => {
+                $('#savedFileLocation').value = ''
+            })
+            $(".save-config").addEventListener('click',() => {
+                qiniuArr.forEach(selector => {
+                    if($(selector)) {
+                        let {id, value} = $(selector)
+                        settingsStore.set(id,value ? value : '')
+                    }
+                })
+                ipcRenderer.send('config-is-saved')
+                remote.getCurrentWindow().close()
+            })
+        })
+
+        function openPage(pageName, elmnt, color) {
+            // Hide all elements with class="tabcontent" by default */
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tabcontent")
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].style.display = "none";
+            }
+
+            // Remove the background color of all tablinks/buttons
+            tablinks = document.getElementsByClassName("tablink")
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove('active')
+            }
+
+            // Show the specific tab content
+            document.getElementById(pageName).style.display = "block"
+            // Add the specific color to the button used to open the tab content
+            elmnt.classList.add('active')
+        }
+
+        // Get the element with id="defaultOpen" and click on it
+        document.getElementById("defaultOpen").click();
+    </script>
+</body>
+
+</html>

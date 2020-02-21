@@ -1,8 +1,8 @@
 /*
  * @Author: Envas chris
  * @Date: 2020-01-22 19:20:00
- * @LastEditTime : 2020-02-01 20:30:26
- * @LastEditors  : Please set LastEditors
+ * @LastEditTime: 2020-02-21 21:03:31
+ * @LastEditors: Please set LastEditors
  * @Description: every component interaction
  * @FilePath: \cloud-electron-docs\src\App.js
  */
@@ -13,10 +13,10 @@ import uuidv4 from 'uuid/v4'
 // All  components
 import FileSearch from './components/slider/search/FileSearch'
 import FileLists from './components/slider/lists/FileLists'
-import SliderButton from './components/slider/button/SliderButton'
 import TabList from './components/tabList/TabList'
+import Loader from './components/global/Loader'
 // All css
-import './public/css/reset.css'
+import './public/css/normalize.css'
 import './public/css/common.css'
 import './public/css/theme-antd.less'
 import './App.css'
@@ -26,33 +26,46 @@ import fileProcessing from './utils/fileProcessing'
 // edit
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
+// import Editor from './components/edit/Editor'
+// hook
+import useIpcRenderer from './components/hooks/useIpcRenderer'
+
 const { Sider, Content } = Layout;
 // require node module 
 const {join,basename,extname,dirname} = window.require('path')
-const {remote} = window.require('electron')
+const {remote,ipcRenderer} = window.require('electron')
 const {dialog,app} = remote
 // electron store 
 const Store = window.require('electron-store')
 const fileStore = new Store()
+// judge config is presence 
+const settingsStore = new Store({ name: 'Settings'})
 const dealWithSaveFileStore = (file) => {
   // dealWith cache file in electron-store
   const saveElectronStoreFile = file.reduce((result, file) => {
-    const {id, path, title, create} = file
+    const {id, path, title, create, isSynced, updateAt} = file
     result[id] = {
       id,
       path,
       title,
-      create
+      create,
+      isSynced,
+      updateAt
     }
+    // console.log('dealWithSaveFileStore',result)
     return result
   },{})
+  // console.log('saveElectronStoreFile',saveElectronStoreFile)
   fileStore.set('files',saveElectronStoreFile)
 }
+
 function App() {
-  //original file of data
+  //get data from electron store 
   const [files,setFiles] = useState(enumToArr(fileStore.get('files')) || [])
   // Arrys to enumerate to help munipulate file faster
   const enumfile = flattenArr(files) || {}
+  console.log('enumfile',enumfile)
+  console.log('enumfile', enumToArr(enumfile))
   // active file id
   const [activeFile_id,setActiveFile_id] = useState('')
   // open files id
@@ -61,6 +74,8 @@ function App() {
   const [unSaveFile_ids,setUnSaveFile_ids] = useState([])
   // search list data
   const [searchedFiles, setSearchedFiles] = useState([])
+  // loading staus
+  const [loading, setLoading] = useState(false)
   // List of opened tab 
   const openedFile = openedFile_ids.map(open_id => {
     return enumfile[open_id]
@@ -71,7 +86,8 @@ function App() {
   const onFileClick = (file_id) => {
     // fileList click event
     const currentFile = enumfile[file_id]
-    if(!currentFile.idLoading) {
+    const {isLoading } = currentFile 
+    if(!isLoading) {
       if(enumfile[file_id].path) {
         fileProcessing.readFile(enumfile[file_id].path).then(value => {
           const newFile = {...enumfile[file_id],body:value,isLoading: true}
@@ -93,6 +109,7 @@ function App() {
   // tab close event
   const onCloseTab = (file_id) => {
     const isSave = unSaveFile_ids.includes(file_id)
+    console.log('isSave',isSave)
     if(isSave) {
       const option = {
         type: 'info',
@@ -102,6 +119,7 @@ function App() {
       }
       dialog.showMessageBox(option)
       .then(result => {
+        console.log(result)
         const newUnSaveFile_ids = unSaveFile_ids.filter(unSaveFile_id => unSaveFile_id !==  file_id)
         setUnSaveFile_ids(newUnSaveFile_ids)
         // remove curent id from openFile_ids
@@ -118,34 +136,41 @@ function App() {
         else{
           // if new file no save we need update files
           const { [file_id]: value, ...leftOver} = enumfile
-          dealWithSaveFileStore(enumToArr(leftOver))
-          setFiles(enumToArr(leftOver))
+          console.log(leftOver)
+          delete enumfile[file_id]
+          dealWithSaveFileStore(enumToArr(enumfile))
+          setFiles(enumToArr(enumfile))
         }
       })
-    }else{
+    } else {
       const newUnSaveFile_ids = unSaveFile_ids.filter(unSaveFile_id => unSaveFile_id !==  file_id)
-        setUnSaveFile_ids(newUnSaveFile_ids)
-        // remove curent id from openFile_ids
-        const newTabList = openedFile_ids.filter(open_id => open_id !== file_id)
-        setOpenedFile_ids([...newTabList])
-        // if still tab-list , set the active to the last opened tab
-        if(openedFile_ids.length) {
-          setActiveFile_id(openedFile_ids[0])
-        }
+      setUnSaveFile_ids(newUnSaveFile_ids)
+      // remove curent id from openFile_ids
+      const newTabList = openedFile_ids.filter(open_id => open_id !== file_id)
+      console.log('newTabList',newTabList)
+      setOpenedFile_ids(newTabList)
+      // if still tab-list , set the active to the last opened tab
+      if(newTabList.length) {
+        setActiveFile_id(newTabList[0])
+      }
     }
   }
   const fileChange = (activeFile_id,value) => {
-    // loop through original file to update new file array
-    enumfile[activeFile_id].body = value
-    setFiles(enumToArr(enumfile))
-    if(!unSaveFile_ids.includes(activeFile_id)) {
-      // check unsaved file to add new unsaved file
-      setUnSaveFile_ids([...unSaveFile_ids,activeFile_id])
+    // if the value changes
+    if(value !== enumfile[activeFile_id].body) {
+       // loop through original file to update new file array
+      enumfile[activeFile_id].body = value
+      setFiles(enumToArr(enumfile))
+      if(!unSaveFile_ids.includes(activeFile_id)) {
+        // check unsaved file to add new unsaved file
+        setUnSaveFile_ids([...unSaveFile_ids,activeFile_id])
+      }
     }
   }
   const onFileDelete = (id) => {
     //delete file data and update electron store
     const getFile = files.find(file => file.id === id)
+    console.log(getFile,files,id)
     if(getFile) {
       delete enumfile[id]
       // delete opened tab 
@@ -162,6 +187,7 @@ function App() {
     }
   }
   const onSaveEditTitle = (id,title,isNew) => {
+    console.log('onSaveEditTitle')
     // loop through original file to update the title
     const {path} = files.find(file => file.id === id)
     if(title) {
@@ -204,11 +230,10 @@ function App() {
   }
   const createNewFile = () => {
     // create file and merge new file array
-    const newFile_id = uuidv4()
     const newFiles = [
       ...files,
       {
-        id: newFile_id,
+        id: uuidv4(),
         title: 'Untitled.md',
         body: '',
         create: +new Date(),
@@ -216,12 +241,11 @@ function App() {
         path: ''
       }
     ]
-    console.log('newFiles',newFiles)
     setFiles(newFiles)
   }
   const saveCurrentFile = () => {
-    const {path,title} = files.find(file => file.id === activFile.id)
-    console.log('saveCurrentFile',path)
+    console.log('activFile',activFile)
+    const {path,title} = activFile
     if(path === '') {
       dialog.showSaveDialog({
         title: 'create file',
@@ -245,6 +269,11 @@ function App() {
     }else{
       fileProcessing.writeFile(path,activFile.body)
       .then(() => {
+        const uploadCloudDoc = ['accessKey', 'secretKey', 'bucketName','enableAutoSync'].every(key => !!settingsStore.get(key))
+        if(uploadCloudDoc) {
+          // send to main process upload-file event
+          ipcRenderer.send('upload-file',{key:`${title}md`,path})
+        }
         setUnSaveFile_ids(unSaveFile_ids.filter(unSaveFile_id => unSaveFile_id !== activFile.id))
       })
     }
@@ -286,9 +315,65 @@ function App() {
       }
     })
   }
-
+  // current file upload to the qiniu
+  const activeUploaded = () => {
+    const { id } = activFile
+    const modifiedFile = {...enumfile[id], isSynced: true, updateAt: (+new Date())}
+    const newFiles = { ...enumfile, [id]: modifiedFile}
+    dealWithSaveFileStore(enumToArr(newFiles))
+    setFiles(enumToArr(newFiles))
+  }
+  // main process send info ,this file should download 
+  const fileDownloaded = (event, msg) => {
+    console.log('fileDownloaded',msg)
+    const currentFile = enumfile[msg.id]
+    const {id, path} = currentFile
+    fileProcessing.readFile(path).then(value => {
+      let newFile 
+      if(msg.status === 200) {
+        newFile = { ...enumfile[id], body: value, isLoading: true, isSynced: true, updateAt: (+new Date())}
+      } else{
+        newFile = { ...enumfile[id], body: value, isLoading: true}
+      }
+      const newFiles = { ...enumfile, [id]: newFile}
+      dealWithSaveFileStore(enumToArr(newFiles))
+      setFiles(enumToArr(newFiles))
+    })
+  }
+  const pullCloudFile = (file_id) => {
+    // get sync auto
+    const getAutoSync = () => ['accessKey', 'secretKey', 'bucketName', 'enableAutoSync'].every(key => !!settingsStore.get(key))
+    console.log('getAutoSync',getAutoSync())
+    if(getAutoSync()) {
+      const currentFile = enumfile[file_id]
+      const { id, title, path } = currentFile 
+      ipcRenderer.send('download-file',{
+        key: `${title}md`,
+        path,
+        id
+      })
+    }
+  } 
+  const loadingStatus = (event,status) => {
+    setLoading(status)
+  }
+  // use useIpcRenderer hook, receive information from the main process
+  const formMainInformation = {
+    'create-new-file': createNewFile,
+    'save-edit-file': saveCurrentFile,
+    'import-file': importFiles,
+    'active-file-uploaded': activeUploaded,
+    'file-downloaded': fileDownloaded,
+    'loading-status': loadingStatus
+  }
+  // ipcRender listen main process send info for the hook
+  useIpcRenderer(formMainInformation)
   return (
     <div className="App">
+      {
+        loading &&
+        <Loader />
+      }
      <Layout>
       <Sider
       >
@@ -300,9 +385,10 @@ function App() {
             onFileClick = {onFileClick}
             onFileDelete = {onFileDelete}
             onSaveEditTitle = {onSaveEditTitle}  
+            pullCloudFile = {pullCloudFile}
             activeFile_id={activeFile_id}
             />
-            <div className="left-panel_ground">
+            {/* <div className="left-panel_ground">
               <SliderButton 
               text='新建'
               type='primary'
@@ -314,7 +400,7 @@ function App() {
               text='保存'
               onclick={saveCurrentFile}
               />
-            </div>
+            </div> */}
         </div>
       </Sider>
       <Layout>
@@ -340,8 +426,13 @@ function App() {
               value={activFile && activFile.body}
               onChange={value => {
                 fileChange(activFile.id,value)
-              }}
+              }}            
               />
+              {/* <Editor 
+              value={activFile && activFile.body}
+              onChange={value => {
+                fileChange(activFile.id,value)
+              }}/> */}
             </Fragment>
           }
         </Content>

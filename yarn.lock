@@ -3344,7 +3344,7 @@ concat-stream@1.6.2, concat-stream@^1.5.0:
     readable-stream "^2.2.2"
     typedarray "^0.0.6"
 
-concurrently@^5.0.2:
+concurrently@^5.1.0:
   version "5.1.0"
   resolved "https://registry.npm.taobao.org/concurrently/download/concurrently-5.1.0.tgz#05523986ba7aaf4b58a49ddd658fab88fa783132"
   integrity sha1-BVI5hrp6r0tYpJ3dZY+riPp4MTI=

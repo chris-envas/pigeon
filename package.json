@@ -31,14 +31,14 @@
     "uuid": "^3.4.0",
     "wait-port": "^0.2.7"
   },
-  "homepage":"./",
+  "homepage": "./",
   "main": "main.js",
   "scripts": {
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject",
-    "dev": "cross-env BROWSER=none npm run start",
+    "dev": "concurrently \"wait-port http://localhost:3000 && electron .\" \"cross-env BROWSER=none npm start\"",
     "dev-electron": "electron .",
     "pack": "electron-builder --dir",
     "dist": "electron-builder"
@@ -116,7 +116,7 @@
     ]
   },
   "devDependencies": {
-    "concurrently": "^5.0.2",
+    "concurrently": "^5.1.0",
     "customize-cra": "^0.9.1",
     "electron": "7.1.9",
     "electron-builder": "20.6.2"

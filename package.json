@@ -5,32 +5,15 @@
     "name": "chris",
     "email": "gugeluojinxu@gmail.com"
   },
-  "description": "this is about doc upload for the app",
+  "repository": "https://github.com/luojinxu520/cloud-electron-docs",
   "private": true,
+  "description": "this is about doc upload for the app",
   "dependencies": {
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.3.2",
-    "@testing-library/user-event": "^7.1.2",
     "antd": "^3.26.7",
     "axios": "^0.19.2",
-    "babel-plugin-import": "^1.13.0",
-    "cross-env": "^7.0.0",
     "electron-is-dev": "^1.1.0",
     "electron-store": "^4.0.0",
-    "fibers": "^4.0.2",
-    "less": "^3.10.3",
-    "less-loader": "^5.0.0",
-    "node-sass": "^4.13.1",
-    "qiniu": "^7.3.0",
-    "react": "^16.12.0",
-    "react-app-rewired": "^2.1.5",
-    "react-dom": "^16.12.0",
-    "react-scripts": "3.4.0",
-    "react-simplemde-editor": "^4.1.0",
-    "sass": "^1.25.0",
-    "typescript": "^3.8.2",
-    "uuid": "^3.4.0",
-    "wait-port": "^0.2.7"
+    "qiniu": "^7.3.0"
   },
   "homepage": "./",
   "main": "main.js",
@@ -42,15 +25,31 @@
     "dev": "concurrently \"wait-port http://localhost:3000 && electron .\" \"cross-env BROWSER=none npm start\"",
     "dev-electron": "electron .",
     "pack": "electron-builder --dir",
-    "dist": "electron-builder"
+    "dist": "electron-builder",
+    "release": "cross-env GH-TOKEN=0d4866c2b1127b4398f30cfdcc8024bee434c87c electron-builder --publish never",
+    "prepack": "npm run build && npm run buildMain",
+    "predist": "npm run build && npm run buildMain",
+    "prerelease": "npm run build && npm run buildMain",
+    "buildMain": "webpack"
   },
   "build": {
     "appId": "pigeon",
     "productName": "pigeon",
     "copyright": "Copyright © 2020 ${author}",
     "extends": null,
+    "extraMetadata": {
+      "main": "./build/main.js"
+    },
     "directories": {
       "buildResources": "assets"
+    },
+    "publish": {
+      "provider": "github",
+      "repo": "https://github.com/luojinxu520/cloud-electron-docs", 
+      "owner": "luojinxu520", 
+      "token": "0d4866c2b1127b4398f30cfdcc8024bee434c87c", 
+      "releaseType": "release",
+      "publishAutoUpdate": true 
     },
     "mac": {
       "category": "public.app-category.productivity",
@@ -90,15 +89,18 @@
       "oneClick": false,
       "perMachine": false
     },
+    "linux": {
+      "category": "Utility",
+      "target": [
+        "deb",
+        "AppImage"
+      ]
+    },
     "files": [
       "build/**/*",
       "node_module/**/*",
       "settings/**/*",
-      "package.json",
-      "main.js",
-      "./src/utils/menuTemplate.js",
-      "CreateWindow.js",
-      "src/utils/qiniuManger.js"
+      "package.json"
     ]
   },
   "eslintConfig": {
@@ -117,9 +119,25 @@
     ]
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2",
+    "babel-plugin-import": "^1.13.0",
     "concurrently": "^5.0.2",
+    "cross-env": "^7.0.0",
     "customize-cra": "^0.9.1",
     "electron": "7.1.9",
-    "electron-builder": "20.6.2"
+    "electron-builder": "20.6.2",
+    "fibers": "^4.0.2",
+    "less": "^3.10.3",
+    "less-loader": "^5.0.0",
+    "react": "^16.12.0",
+    "react-app-rewired": "^2.1.5",
+    "react-dom": "^16.12.0",
+    "react-scripts": "3.4.0",
+    "react-simplemde-editor": "^4.1.0",
+    "uuid": "^3.4.0",
+    "wait-port": "^0.2.7",
+    "webpack-cli": "^3.3.11"
   }
 }

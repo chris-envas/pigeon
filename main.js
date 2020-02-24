@@ -34,7 +34,7 @@ app.on("ready",() => {
 	mainWindow = new BrowserWindow(mainOption)
 	mainWindow.webContents.openDevTools()
 	console.log('isDev',isDev)
-	let url = isDev ? 'http://localhost:3000/' : `file://${path.join(__dirname, './build/index.html')}`
+	let url = isDev ? 'http://localhost:3000/' : `file://${path.join(__dirname, './index.html')}`
 	if(url) mainWindow.loadURL(url)
 	let menu = Menu.buildFromTemplate(menuTemplate)
 	Menu.setApplicationMenu(menu)

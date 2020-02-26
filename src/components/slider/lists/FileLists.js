@@ -56,7 +56,14 @@ const FileLists = ({files,onFileClick,onSaveEditTitle,onFileDelete,pullCloudFile
   return (
     <ul
     className="file-lists"
-    style={{color:'#fff'}}>
+    style={
+      {
+        color: '#fff',
+        overflow: 'auto',
+        maxHeight: '100vh',
+        marginBottom: '0px'
+      }
+    }>
      {
        files.map(file => (
         <li

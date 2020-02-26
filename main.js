@@ -9,6 +9,7 @@
 const menuTemplate = require('./src/utils/menuTemplate')
 const { app, BrowserWindow, Menu, ipcMain,dialog } = require('electron')
 const isDev = require('electron-is-dev')
+const {autoUpdater} = require('electron-updater')
 const CreateWindow = require('./CreateWindow')
 const path = require('path')
 const Store = require('electron-store')
@@ -31,9 +32,55 @@ const mainOption = {
 }
 
 app.on("ready",() => {
+	// autoUpdater.setFeedURL('https://github.com/luojinxu520/electron-lessons/releases')
+	// const log = require("electron-log")
+    // log.transports.file.level = "debug"
+	// autoUpdater.logger = log
+	// autoUpdater.checkForUpdatesAndNotify()
+	if(isDev) {
+		autoUpdater.updateConfigPath = path.join(__dirname, 'dev-app-update.yml')
+	}
+	autoUpdater.autoDownload = false // 取消自动下载
+	autoUpdater.checkForUpdates() // 检查更新
+	autoUpdater.on('error', error => {
+		dialog.showErrorBox('Check Update Error', error === null ? 'unknow' : error)
+	})
+	autoUpdater.on('update-available', () => {
+		dialog.showMessageBox({
+			type: 'info',
+			title: '发现新版本',
+			message: '是否更新到最新应用',
+			buttons: ['是','否'],
+		}).then(status => {
+			console.log(JSON.stringify(status))
+			if(status.response == '0') {
+				console.log('开始下载')
+				autoUpdater.downloadUpdate()
+			}
+		})
+	})
+	autoUpdater.on('update-not-available', () => {
+		dialog.showMessageBox({
+			title: '最新版本',
+			message: '已获得最新版本',
+		})
+	})
+	autoUpdater.on('download-progress', progressObj => {
+		let log_message = `download speed: ${progressObj.bytesPerSecond}`
+		log_message += `- download' ${progressObj.percent} %`
+		log_message += `(${progressObj.transferred}/${progressObj.total})`
+		console.log(log_message)
+	})
+	autoUpdater.on('update-downloaded', () => {
+		dialog.showMessageBox({
+			title: '安装更新',
+			message: '更新下载完毕，将重启应用完成更新'
+		}).then(() => {
+			setImmediate(() => autoUpdater.quitAndInstall())
+		})
+	})
 	mainWindow = new BrowserWindow(mainOption)
 	mainWindow.webContents.openDevTools()
-	console.log('isDev',isDev)
 	let url = isDev ? 'http://localhost:3000/' : `file://${path.join(__dirname, './index.html')}`
 	if(url) mainWindow.loadURL(url)
 	let menu = Menu.buildFromTemplate(menuTemplate)
@@ -51,7 +98,7 @@ app.on("ready",() => {
 		}
 		const settingsFileLocation = `file://${path.join(__dirname, './settings/settings.html')}`
 		settingsWindow = new CreateWindow(settingsWindowConfig, settingsFileLocation)
-		settingsWindow.webContents.openDevTools()
+		// settingsWindow.webContents.openDevTools()
 		settingsWindow.removeMenu()
 		settingsWindow.on('closed', () => {
 			settingsWindow = null

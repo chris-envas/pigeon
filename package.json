@@ -1,6 +1,6 @@
 {
-  "name": "cloud-app",
-  "version": "0.0.1",
+  "name": "pigeon",
+  "version": "0.0.0",
   "author": {
     "name": "chris",
     "email": "gugeluojinxu@gmail.com"
@@ -12,7 +12,9 @@
     "antd": "^3.26.7",
     "axios": "^0.19.2",
     "electron-is-dev": "^1.1.0",
+    "electron-log": "^4.0.7",
     "electron-store": "^4.0.0",
+    "electron-updater": "^4.2.2",
     "qiniu": "^7.3.0"
   },
   "homepage": "./",
@@ -26,7 +28,7 @@
     "dev-electron": "electron .",
     "pack": "electron-builder --dir",
     "dist": "electron-builder",
-    "release": "cross-env GH-TOKEN=0d4866c2b1127b4398f30cfdcc8024bee434c87c electron-builder --publish never",
+    "release": "cross-env GH_TOKEN=822aac8df6d4d6237d29475e02aee30c42185a59 electron-builder",
     "prepack": "npm run build && npm run buildMain",
     "predist": "npm run build && npm run buildMain",
     "prerelease": "npm run build && npm run buildMain",
@@ -43,14 +45,9 @@
     "directories": {
       "buildResources": "assets"
     },
-    "publish": {
-      "provider": "github",
-      "repo": "https://github.com/luojinxu520/cloud-electron-docs", 
-      "owner": "luojinxu520", 
-      "token": "0d4866c2b1127b4398f30cfdcc8024bee434c87c", 
-      "releaseType": "release",
-      "publishAutoUpdate": true 
-    },
+    "publish": [
+       "github"
+    ],
     "mac": {
       "category": "public.app-category.productivity",
       "artifactName": "${productName}-${version}-${arch}.${text}"

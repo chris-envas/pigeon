@@ -29,7 +29,8 @@ let menuTemplate = [{
                 browserWindow.webContents.send('search-file')
             }
         }, {
-            label: '导入文件',
+            label: '打开文件',
+            accelerator: 'CmdOrCtrl+O',
             click: (menuItem, browserWindow, event) => {
                 browserWindow.webContents.send('import-file')
             }

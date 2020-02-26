@@ -29,6 +29,7 @@ import "easymde/dist/easymde.min.css";
 // import Editor from './components/edit/Editor'
 // hook
 import useIpcRenderer from './components/hooks/useIpcRenderer'
+import useDrag from './components/hooks/useDrag'
 
 const { Sider, Content } = Layout;
 // require node module 
@@ -368,6 +369,15 @@ function App() {
   }
   // ipcRender listen main process send info for the hook
   useIpcRenderer(formMainInformation)
+  // web drag event
+  const dragFileSave = (params) => {
+    const draptFile = {...params, id: uuidv4()}
+    console.log(draptFile)
+    dealWithSaveFileStore([...files,draptFile])
+    setFiles([...files,draptFile])
+  }
+  useDrag(dragFileSave)
+
   return (
     <div className="App">
       {

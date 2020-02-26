@@ -16,7 +16,15 @@ import { getParentNode } from '../../utils/domProcessing'
 const TabList = ({files,unSaveFile_ids,onTabClick,onCloseTab,activeFile_id}) => {
     return (
        <div
-       style={{maxHeight:30}}>
+       className="tab-lists"
+       style={
+           {
+            minHeight:30,
+            whiteSpace:'nowrap',
+            maxWidth: '100%',
+            overflow: 'auto'
+           }
+        }>
            {    
             files.map((file,index) => 
                 <Tag 

@@ -1,6 +1,23 @@
+body::-webkit-scrollbar,.file-lists::-webkit-scrollbar,.tab-lists::-webkit-scrollbar {/*滚动条整体样式*/
+    width: 10px;     /*高宽分别对应横竖滚动条的尺寸*/
+    height: 8px;
+}
+
+body::-webkit-scrollbar-thumb,.file-lists::-webkit-scrollbar-thumb,.tab-lists::-webkit-scrollbar-thumb {/*滚动条里面小方块*/
+    border-radius: 10px;
+     -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    background: #535353;
+}
+
+body::-webkit-scrollbar-track,.file-lists::-webkit-scrollbar-track,.tab-lists::-webkit-scrollbar-track{/*滚动条里面轨道*/
+    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    border-radius: 10px;
+    background: #EDEDED;
+}
 .out-range{
     width: 80%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+

@@ -9,6 +9,9 @@
 const qiniu = require('qiniu')
 const axios = require('axios')
 const fs = require('fs')
+const { join } = require('path')
+const Store = require('electron-store')
+const settingsStore = new Store({name: 'Settings'})
 
 //understand more: https://developer.qiniu.com/kodo/sdk/1289/nodejs#rs-delete
 class QiniuManger {
@@ -30,7 +33,26 @@ class QiniuManger {
         // public domain name
         this.publicDownloadUrl = ''
     }
+    getListPrefix() {
+        let options = {
+            limit: 1000,
+            prefix: ''
+        }
+        return new Promise((resolve,reject) => {
+            this.bucketManager.listPrefix(this.bucket,options,this._handleCallBack(resolve,reject))
+        })
+
+    }
+    move(srcKey,destKey) {
+        let options = {
+            force: true
+        }
+        return new Promise((resolve,reject) => {
+            this.bucketManager.move(this.bucket, srcKey, this.bucket, destKey, options,this._handleCallBack(resolve,reject))
+        })
+    }
     getState (key) {
+        console.log('getState')
         // check file list info
         return new Promise((resolve,reject) => {
             this.bucketManager.stat(this.bucket, key, this._handleCallBack(resolve,reject))
@@ -59,6 +81,7 @@ class QiniuManger {
         return this.getDownloadLink(key).then(link => {
             const timeStamep = +new Date()
             const url = `${link}?timeStamep=${timeStamep}`
+            console.log(url)
             return axios({
                 url,
                 method: 'GET',
@@ -68,6 +91,7 @@ class QiniuManger {
         })
         .then(response => {
             const writer = fs.createWriteStream(path)
+            console.log(response.data)
             response.data.pipe(writer)
             return new Promise((resolve,reject) => {
                 writer.on('finish',resolve)
@@ -77,27 +101,6 @@ class QiniuManger {
             if(err) return Promise.reject({err:err.response})
         })
     }
-    // downloadFile(key, downloadPath) {
-    //     return this.getDownloadLink(key).then(link => {
-    //       const timeStamp = new Date().getTime()
-    //       const url = `${link}?timestamp=${timeStamp}`
-    //       return axios({
-    //         url,
-    //         method: 'GET',
-    //         responseType: 'stream',
-    //         headers: {'Cache-Control': 'no-cache'}
-    //       })
-    //     }).then(response => {
-    //       const writer = fs.createWriteStream(downloadPath)
-    //       response.data.pipe(writer)
-    //       return new Promise((resolve, reject) => {
-    //         writer.on('finish', resolve)
-    //         writer.on('error', reject)
-    //       })
-    //     }).catch(err => {
-    //       return Promise.reject({ err: err.response })
-    //     })
-    //   }
     getDownloadLink (key) {
         /*
         * publicBucketDomain - set access domain name
@@ -117,6 +120,7 @@ class QiniuManger {
         })
     }
     _handleCallBack(resolve,reject) {
+        // return promise
         return (respErr,respBody,respInfo) => {
             if (respErr) {
                 throw respErr

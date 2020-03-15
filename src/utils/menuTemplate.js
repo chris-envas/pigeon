@@ -62,7 +62,7 @@ let menuTemplate = [{
           label: '从云端下载到本地',
           enabled: qiniuIsConfiged,
           click: () => {
-            
+            ipcMain.emit('download-all-to-qiniu')
           }
         }]
     },

@@ -20,17 +20,16 @@ import './public/css/normalize.css'
 import './public/css/common.css'
 import './public/css/theme-antd.less'
 import './App.css'
-// from util about function or data
+// flatten arr to enum type
 import {flattenArr,enumToArr} from './utils/dataProcessing'
 import fileProcessing from './utils/fileProcessing'
-// edit
+// editor cmponent
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 // import Editor from './components/edit/Editor'
-// hook
+// All hooks
 import useIpcRenderer from './components/hooks/useIpcRenderer'
 import useDrag from './components/hooks/useDrag'
-
 const { Sider, Content } = Layout;
 // require node module 
 const {join,basename,extname,dirname} = window.require('path')
@@ -63,10 +62,10 @@ const dealWithSaveFileStore = (file) => {
 function App() {
   //get data from electron store 
   const [files,setFiles] = useState(enumToArr(fileStore.get('files')) || [])
+  console.log(files)
   // Arrys to enumerate to help munipulate file faster
   const enumfile = flattenArr(files) || {}
   console.log('enumfile',enumfile)
-  console.log('enumfile', enumToArr(enumfile))
   // active file id
   const [activeFile_id,setActiveFile_id] = useState('')
   // open files id
@@ -168,9 +167,10 @@ function App() {
       }
     }
   }
-  const onFileDelete = (id) => {
+  const onFileDelete = (id,status) => {
     //delete file data and update electron store
     const getFile = files.find(file => file.id === id)
+    const { key, title } = getFile
     console.log(getFile,files,id)
     if(getFile) {
       delete enumfile[id]
@@ -180,19 +180,32 @@ function App() {
       dealWithSaveFileStore(enumToArr(enumfile))
       // update files
       setFiles(enumToArr(enumfile))
-      return
-      // it is dangererous to delete directly
-      fileProcessing.deleteFile(getFile.path)
-      .then(() => {
-      })
+      if(status) {
+        dialog.showMessageBox({
+          type:'info',
+          title: '彻底删除(不可逆)',
+          message: `确定从云空间删除${getFile.title}文件(本地文件将一同被删除)`,
+          buttons: ['是','否'],
+        }).then(status => {
+          if(status.response == '0') {
+           // it is dangererous to delete directly
+            fileProcessing.deleteFile(getFile.path).then((res) => {
+              console.log(res)
+            })
+            ipcRenderer.send('delete-to-qiniu',{
+              key: title
+            })
+          }
+        })
+      }
     }
   }
   const onSaveEditTitle = (id,title,isNew) => {
     console.log('onSaveEditTitle')
     // loop through original file to update the title
-    const {path} = files.find(file => file.id === id)
+    const file = files.find(file => file.id === id)
     if(title) {
-      const newPath = join(dirname(path),`${title}.md`)
+      const newPath = join(dirname(file.path),`${title}.md`)
       if(isNew) {
         // if new file we should update files and save electron store 
         enumfile[id].title = title
@@ -201,13 +214,17 @@ function App() {
         setFiles(enumToArr(enumfile))
       }else{
         // if old file we directly change file name 
-        fileProcessing.renameFile(path,newPath)
+        fileProcessing.renameFile(file.path,newPath)
         .then(() => {
           enumfile[id].title = title
           enumfile[id].isNew = false
           enumfile[id].path = newPath
           dealWithSaveFileStore(enumToArr(enumfile))
           setFiles(enumToArr(enumfile))
+          ipcRenderer.send('rename-to-qiniu',{
+            title: `${file.title}md`,
+            newTitle: `${title}.md`
+          })
         })
       }
     }else{
@@ -324,40 +341,114 @@ function App() {
     dealWithSaveFileStore(enumToArr(newFiles))
     setFiles(enumToArr(newFiles))
   }
+  const allFileDownload = (event,msg) => {
+    const { title, path,status  } = msg
+    console.log(msg)
+    if(status == '200') {
+      const newFiles = [
+        ...files,
+        {
+          id: uuidv4(),
+          title: title,
+          body: '',
+          create: +new Date(),
+          isNew: false,
+          path: path
+        }
+      ]
+      setFiles(newFiles)
+    }
+  }
   // main process send info ,this file should download 
   const fileDownloaded = (event, msg) => {
     console.log('fileDownloaded',msg)
     const currentFile = enumfile[msg.id]
     const {id, path} = currentFile
+    const { status } = msg
     fileProcessing.readFile(path).then(value => {
       let newFile 
-      if(msg.status === 200) {
-        newFile = { ...enumfile[id], body: value, isLoading: true, isSynced: true, updateAt: (+new Date())}
-      } else{
-        newFile = { ...enumfile[id], body: value, isLoading: true}
+      switch (status) {
+        case '200':
+          newFile = { ...enumfile[id], body: value, isLoading: true, isSynced: true, updateAt: (+new Date())}
+          alert('下载成功')
+          break;
+        case '303':
+          newFile = { ...enumfile[id], body: value, isLoading: true}
+          alert('当前已是最新文件')
+          break; 
+        case '612':
+          newFile = { ...enumfile[id], body: value, isLoading: true}
+          alert('网络错误')
+          break;
+        default:
+          break;
       }
+
       const newFiles = { ...enumfile, [id]: newFile}
       dealWithSaveFileStore(enumToArr(newFiles))
       setFiles(enumToArr(newFiles))
     })
   }
+  // go to the qiniu to get file
   const pullCloudFile = (file_id) => {
     // get sync auto
-    const getAutoSync = () => ['accessKey', 'secretKey', 'bucketName', 'enableAutoSync'].every(key => !!settingsStore.get(key))
-    console.log('getAutoSync',getAutoSync())
-    if(getAutoSync()) {
-      const currentFile = enumfile[file_id]
+    // const getAutoSync = () => ['accessKey', 'secretKey', 'bucketName', 'enableAutoSync'].every(key => !!settingsStore.get(key))
+    // if(getAutoSync()) {
+    //   const currentFile = enumfile[file_id]
+    //   const { id, title, path } = currentFile 
+    //   ipcRenderer.send('download-file',{
+    //     key: `${title}md`,
+    //     path,
+    //     id
+    //   })
+    // }
+    const currentFile = enumfile[file_id]
       const { id, title, path } = currentFile 
       ipcRenderer.send('download-file',{
-        key: `${title}md`,
+        key: `${title}`,
         path,
         id
       })
-    }
   } 
+  // go to the qiniu to upload file
+  const uploadFile = (file_id) => {
+    // get upload auto
+    const getAutoSync = () => ['accessKey', 'secretKey', 'bucketName', 'enableAutoSync'].every(key => !!settingsStore.get(key))
+    if(getAutoSync) {
+      const currentFile = enumfile[file_id]
+      const { id, title, path } = currentFile 
+      ipcRenderer.send('upload-file',{
+        key: `${title}`,
+        path,
+        id,
+        manual: true
+      })
+    }
+  }
   const loadingStatus = (event,status) => {
     setLoading(status)
   }
+  // because upload all file to qiniu so need update  structrue
+  const uploadFileStructrue = () => {
+    console.log('uploadFileStructrue')
+    const newFilesArr = files.map((file) => {
+      console.log(file)
+      const currentTime = +new Date()
+      let Iteration = {
+        ...enumfile[file.id],
+        isSynced: true,
+        updateAt: currentTime
+      }
+      return Iteration
+    },{})
+    console.log(newFilesArr)
+    dealWithSaveFileStore(enumToArr(newFilesArr))
+    setFiles(enumToArr(newFilesArr))
+  }
+  // because rename to qiniu so need update  structrue
+  // const renameFileStructrue = () => {
+
+  // }
   // use useIpcRenderer hook, receive information from the main process
   const formMainInformation = {
     'create-new-file': createNewFile,
@@ -365,7 +456,9 @@ function App() {
     'import-file': importFiles,
     'active-file-uploaded': activeUploaded,
     'file-downloaded': fileDownloaded,
-    'loading-status': loadingStatus
+    'loading-status': loadingStatus,
+    'upload-files-structrue': uploadFileStructrue,
+    'all-fileDownload': allFileDownload
   }
   // ipcRender listen main process send info for the hook
   useIpcRenderer(formMainInformation)
@@ -396,6 +489,7 @@ function App() {
             onFileDelete = {onFileDelete}
             onSaveEditTitle = {onSaveEditTitle}  
             pullCloudFile = {pullCloudFile}
+            uploadFile = {uploadFile}
             activeFile_id={activeFile_id}
             />
             {/* <div className="left-panel_ground">

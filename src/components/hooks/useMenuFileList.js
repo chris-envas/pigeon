@@ -13,7 +13,9 @@ const { Menu,MenuItem } = remote
 const useMenuFileList = (itemArr, targetSelector, deps) => {
   let clickedElement = useRef(null)
   useEffect(() => {
+    // Instantiate menu
     const menu = new Menu()
+    // push submenu
     itemArr.forEach(item => {
       menu.append(new MenuItem(item))
     })

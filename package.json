@@ -15,7 +15,8 @@
     "electron-log": "^4.0.7",
     "electron-store": "^4.0.0",
     "electron-updater": "^4.2.2",
-    "qiniu": "^7.3.0"
+    "qiniu": "^7.3.0",
+    "qiniu-mithril": "^1.0.0"
   },
   "homepage": "./",
   "main": "main.js",
@@ -46,7 +47,7 @@
       "buildResources": "assets"
     },
     "publish": [
-       "github"
+      "github"
     ],
     "mac": {
       "category": "public.app-category.productivity",

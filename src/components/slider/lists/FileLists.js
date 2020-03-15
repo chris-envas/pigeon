@@ -4,8 +4,9 @@ import PropTypes from 'prop-types'
 import './FileLists.less'
 import useMenuFileList from '../../hooks/useMenuFileList'
 import {getParentNode} from '../../../utils/domProcessing'
+const {remote,ipcRenderer} = window.require('electron')
 
-const FileLists = ({files,onFileClick,onSaveEditTitle,onFileDelete,pullCloudFile,activeFile_id}) => {
+const FileLists = ({files,onFileClick,onSaveEditTitle,onFileDelete,pullCloudFile,uploadFile,activeFile_id}) => {
   /*
   * @files: original file data
   * @onFileClick: file click interaction
@@ -27,21 +28,39 @@ const FileLists = ({files,onFileClick,onSaveEditTitle,onFileDelete,pullCloudFile
       }
     }
   },{
-    label:'删除 (delete)',
-    click: () => {
-      const getFileItem = getParentNode(clickElement, 'file-item')
-      if(getFileItem) {
-        const file_id = getFileItem.getAttribute('data-id')
-        onFileDelete(file_id)
-      }
-    }
-  },{
     label: '拉取 (pull)',
     click: () => {
       const getFileItem = getParentNode(clickElement, 'file-item')
       if(getFileItem) {
         const file_id = getFileItem.getAttribute('data-id')
         pullCloudFile(file_id)
+      }
+    }
+  },{
+    label:'上传 (upload)',
+    click: () => {
+      const getFileItem = getParentNode(clickElement, 'file-item')
+      if(getFileItem) {
+        const file_id = getFileItem.getAttribute('data-id')
+        uploadFile(file_id)
+      }
+    }
+  },{
+    label:'云空间删除 (delete in cloud)',
+    click: () => {
+      const getFileItem = getParentNode(clickElement, 'file-item')
+      if(getFileItem) {
+        const file_id = getFileItem.getAttribute('data-id')
+        onFileDelete(file_id,true)
+      }
+    }
+  },{
+    label:'删除 (delete)',
+    click: () => {
+      const getFileItem = getParentNode(clickElement, 'file-item')
+      if(getFileItem) {
+        const file_id = getFileItem.getAttribute('data-id')
+        onFileDelete(file_id)
       }
     }
   }],'.file-lists',[files])

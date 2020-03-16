@@ -103,14 +103,16 @@ const FileLists = ({files,onFileClick,onSaveEditTitle,onFileDelete,pullCloudFile
                 onSaveEditTitle(file.id,value,file.isNew)
                 setEditStatus('')
               }}></div>
-              <Input placeholder={ file.title ? file.title : '请输入文件名称'}  
+              <Input defaultValue={ file.title ? file.title : '请输入文件名称'}  
                 onChange={(e) => {
+                  console.log(e.target.value)
                   setValue(e.target.value)
                 }}
                 onKeyDown={(e) => {
                   if(e.keyCode === 13) {
                     e.stopPropagation()
-                    onSaveEditTitle(file.id,value,file.isNew)
+                    let newTitle = value.indexOf('.md') > 0 ? value : value + '.md'
+                    onSaveEditTitle(file.id,newTitle,file.isNew)
                     setEditStatus('')
                   }
                 }}

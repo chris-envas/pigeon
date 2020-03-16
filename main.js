@@ -203,35 +203,45 @@ app.on("ready", () => {
 	ipcMain.on('download-all-to-qiniu', (event, msg) => { 
 		const mananger = createQiniuManger()
 		const savedLocation = settingsStore.get('savedFileLocation')
-		console.log(savedLocation)
+		const storeFiles = fileStore.get('files') || {}
+		let cloudFiles = null
 		mananger.getListPrefix().then(res => {
-			let localFiles = Object.keys(fileStore.get('files')).reduce((original,key) => {
-				original[fileStore.get('files')[key].title] = fileStore.get('files')[key]
-				return original
-			},{})
-			let cloudFiles = res.items
-			.map(file => {
-				if(localFiles[file.key]){
-					let localFilePath = localFiles[file.key].path ? localFiles[file.key].path * 10000 : false
-					if(localFilePath == savedLocation) {
-						let localUpdateTime = localFiles[file.key].updateAt ? localFiles[file.key].updateAt * 10000 : 0
-						let cloudUpdateTime = file.putTime
-						console.log(localUpdateTime,cloudUpdateTime)
-						if(cloudUpdateTime > localUpdateTime) return file
-					}else{
+			// if it is exists local file, will be filter
+			console.log(storeFiles)
+			if(Object.keys(storeFiles).length > 1) {
+				let localFiles = Object.keys(storeFiles).reduce((original,key) => {
+					original[storeFiles[key].title] = storeFiles[key]
+					return original
+				},{})
+				cloudFiles = res.items
+				.map(file => {
+					if(localFiles[file.key]){
+						let localFilePath = localFiles[file.key].path ? localFiles[file.key].path * 10000 : false
+						if(localFilePath == savedLocation) {
+							let localUpdateTime = localFiles[file.key].updateAt ? localFiles[file.key].updateAt * 10000 : 0
+							let cloudUpdateTime = file.putTime
+							console.log(localUpdateTime,cloudUpdateTime)
+							if(cloudUpdateTime > localUpdateTime) return file
+						}else{
+							return file
+						}
+					} else{
 						return file
 					}
-				} else{
-					return file
-				}
-			})
+				})
+			}else{
+				cloudFiles = res.items
+			}
+			
 			console.log(cloudFiles)
+		
 			cloudFiles.forEach(file => {
 				let key = file.key
-				mananger.downloadFile(key, savedLocation).then(() => {
+				let savePath = path.join(savedLocation, key)
+				mananger.downloadFile(key, savePath).then(() => {
 					mainWindow.webContents.send('all-fileDownload', {
 						status: '200',
-						path: savedLocation,
+						path: savePath,
 						title: key
 					})
 				}).catch(err => {

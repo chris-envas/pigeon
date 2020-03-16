@@ -91,11 +91,17 @@ class QiniuManger {
         })
         .then(response => {
             const writer = fs.createWriteStream(path)
-            console.log(response.data)
+            // console.log(response.data)
             response.data.pipe(writer)
             return new Promise((resolve,reject) => {
-                writer.on('finish',resolve)
-                writer.on('error',reject)
+                writer.on('finish',() => {
+                    console.log('读写成功')
+                    resolve()
+                })
+                writer.on('error',() => {
+                    console.log('读写失败')
+                    reject()
+                })
             })
         }).catch(err => {
             if(err) return Promise.reject({err:err.response})

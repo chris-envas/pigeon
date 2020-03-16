@@ -205,7 +205,7 @@ function App() {
     // loop through original file to update the title
     const file = files.find(file => file.id === id)
     if(title) {
-      const newPath = join(dirname(file.path),`${title}.md`)
+      const newPath = join(dirname(file.path),`${title}`)
       if(isNew) {
         // if new file we should update files and save electron store 
         enumfile[id].title = title
@@ -222,8 +222,8 @@ function App() {
           dealWithSaveFileStore(enumToArr(enumfile))
           setFiles(enumToArr(enumfile))
           ipcRenderer.send('rename-to-qiniu',{
-            title: `${file.title}md`,
-            newTitle: `${title}.md`
+            title: `${file.title}`,
+            newTitle: `${title}`
           })
         })
       }
@@ -344,19 +344,29 @@ function App() {
   const allFileDownload = (event,msg) => {
     const { title, path,status  } = msg
     console.log(msg)
+    // extend new files
     if(status == '200') {
-      const newFiles = [
-        ...files,
-        {
-          id: uuidv4(),
-          title: title,
-          body: '',
-          create: +new Date(),
-          isNew: false,
-          path: path
+      // if it is exists
+      let isFind = files.find(file => {
+        if(file.path == path && file.title == title) {
+          return file
         }
-      ]
-      setFiles(newFiles)
+      })
+      if(!isFind) {
+        const newFiles = [
+          ...files,
+          {
+            id: uuidv4(),
+            title: title,
+            body: '',
+            create: +new Date(),
+            isNew: false,
+            path: path
+          }
+        ]
+        dealWithSaveFileStore(newFiles)
+        setFiles(newFiles)
+      }
     }
   }
   // main process send info ,this file should download 

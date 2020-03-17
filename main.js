@@ -165,15 +165,6 @@ app.on("ready", () => {
 			const fileObj = fileStore.get('files')
 			const qiniuUpdateTime = Math.round(resp.putTime / 10000)
 			const localUpdateTime = fileObj[msg.id].updateAt ? fileObj[msg.id].updateAt : false
-			console.log(resp)
-			mananger.downloadFile(key, path).then(() => {
-				console.log('下载成功')
-				mainWindow.webContents.send('file-downloaded', {
-					status: '200',
-					id
-				})
-			})
-			return
 			if (localUpdateTime) {
 				console.log(qiniuUpdateTime, localUpdateTime)
 				if (qiniuUpdateTime > localUpdateTime) {
@@ -207,7 +198,6 @@ app.on("ready", () => {
 		let cloudFiles = null
 		mananger.getListPrefix().then(res => {
 			// if it is exists local file, will be filter
-			console.log(storeFiles)
 			if(Object.keys(storeFiles).length > 1) {
 				let localFiles = Object.keys(storeFiles).reduce((original,key) => {
 					original[storeFiles[key].title] = storeFiles[key]
@@ -235,150 +225,50 @@ app.on("ready", () => {
 			
 			console.log(cloudFiles)
 		
-			cloudFiles.forEach(file => {
+			// cloudFiles.forEach(file => {
+			// 	let key = file.key
+			// 	let savePath = path.join(savedLocation, key)
+			// 	mananger.downloadFile(key, savePath).then(() => {
+			// 		mainWindow.webContents.send('all-fileDownload', {
+			// 			status: '200',
+			// 			path: savePath,
+			// 			title: key
+			// 		})
+			// 	}).catch(err => {
+			// 		mainWindow.webContents.send('all-fileDownload', {
+			// 			status: '404',
+			// 		})
+			// 	})
+			// })
+			let promiseSqueue = cloudFiles.map(file => {
 				let key = file.key
 				let savePath = path.join(savedLocation, key)
-				mananger.downloadFile(key, savePath).then(() => {
+				return mananger.downloadFile(key, savePath).then(() => {
 					mainWindow.webContents.send('all-fileDownload', {
 						status: '200',
 						path: savePath,
 						title: key
 					})
+					return Promise.resolve()
 				}).catch(err => {
 					mainWindow.webContents.send('all-fileDownload', {
 						status: '404',
 					})
+					return Promise.reject()
 				})
+			})
+
+			Promise.all(promiseSqueue).then((value) => {
+				dialog.showMessageBox({
+					type: 'info',
+					title: '下载成功',
+					message: `云端文件下载已完成`
+				})
+			},(err) => {
+				dialog.showErrorBox('下载失败', '文件队列下载发生意外，请稍后再试')
 			})
 			
 		})
-	})
-	ipcMain.on('download-all-to-qinius', (event, msg) => {
-		const mananger = createQiniuManger()
-		mananger.getListPrefix().then(res => {
-			console.log('download-all-to-qinius \n'+res)
-			return
-			let cloudFiles = res.items
-			if(Object.keys(fileStore.get('files')).length) {
-				localFiles = Object.keys(fileStore.get('files')).reduce((original,key) => {
-					let title = fileStore.get('files')[key].title
-					original[title] = fileStore.get('files')[key]
-					return original
-				},{})
-				let filterArr = cloudFiles.filter(file => !localFiles[file.key]) || []
-				let checkArr = cloudFiles.filter(file => localFiles[file.key]).map(file => {
-					let c = Math.round(file.putTime / 10000)
-					let l = localFiles[file.key].updateAt 
-					return c > l ? file : ''
-				})
-				let downloadArr = [...filterArr,...checkArr]
-				downloadArr.forEach(file => {
-					console.log('localFiles \n' + JSON.stringify(localFiles[file.key].path))
-					const key = file.key
-					const id = localFiles[file.key].id
-					const path = localFiles[file.key].path
-					mananger.getState(key).then(resp => {
-						const fileObj = fileStore.get('files')
-						const qiniuUpdateTime = Math.round(resp.putTime / 10000)
-						const localUpdateTime = fileObj[id].updateAt ? fileObj[id].updateAt : false
-						if (localUpdateTime) {
-							console.log(qiniuUpdateTime, localUpdateTime)
-							if (qiniuUpdateTime > localUpdateTime) {
-								mananger.downloadFile(key, path).then(() => {
-									mainWindow.webContents.send('file-downloaded', {
-										status: '200',
-										id
-									})
-								}).catch(err => {
-									mainWindow.webContents.send('file-downloaded', {
-										status: '404',
-										id
-									})
-								})
-							}else{
-								mainWindow.webContents.send('file-downloaded', {
-									status: '303',
-									id
-								})
-							}
-						}
-					}, error => {
-						if (error) {
-							mainWindow.webContents.send('file-downloaded', {
-								status: '612',
-								id
-							})
-						}
-					})
-				})
-			}else{
-				cloudFiles.forEach(file => {
-					console.log('localFiles \n' + JSON.stringify(localFiles[file.key].path))
-					const key = file.key
-					const id = localFiles[file.key].id
-					const path = localFiles[file.key].path
-					// ipcMain.emit('download-file',{
-					// 	key: file.key,
-					// 	path: localFiles[file.key].path,
-					// 	id: localFiles[file.key].id
-					// })
-					mananger.getState(key).then(resp => {
-						const fileObj = fileStore.get('files')
-						const qiniuUpdateTime = Math.round(resp.putTime / 10000)
-						const localUpdateTime = fileObj[id].updateAt ? fileObj[id].updateAt : false
-						if (localUpdateTime) {
-							console.log(qiniuUpdateTime, localUpdateTime)
-							if (qiniuUpdateTime > localUpdateTime) {
-								mananger.downloadFile(key, path).then(() => {
-									mainWindow.webContents.send('file-downloaded', {
-										status: '200',
-										id
-									})
-								}).catch(err => {
-									mainWindow.webContents.send('file-downloaded', {
-										status: '404',
-										id
-									})
-								})
-							}else{
-								mainWindow.webContents.send('file-downloaded', {
-									status: '303',
-									id
-								})
-							}
-						}
-					}, error => {
-						if (error) {
-							mainWindow.webContents.send('file-downloaded', {
-								status: '612',
-								id
-							})
-						}
-					})
-				})
-			}
-			
-			localFiles = Object.keys(fileStore.get('files')).reduce((original,key) => {
-				let title = fileStore.get('files')[key].title
-				original[title] = fileStore.get('files')[key]
-            	return original
-			},{})
-			let filterArr = cloudFiles.filter(file => !localFiles[file.key]) || []
-			let checkArr = cloudFiles.filter(file => localFiles[file.key]).map(file => {
-				let c = Math.round(file.putTime / 10000)
-				let l = localFiles[file.key].updateAt 
-				return c > l ? file : ''
-			})
-			let downloadArr = [...filterArr,...checkArr]
-			// console.log(downloadArr)	
-			
-		
-		})
-		// .catch(err => {
-		// 	if (err) {
-		// 		dialog.showErrorBox('失败', `下载失败，请检查网络是否故障`)
-		// 	}
-		// })
 	})
 	// qiniu upload all files
 	ipcMain.on('upload-all-to-qiniu', () => {

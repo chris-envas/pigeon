@@ -9,9 +9,6 @@
 const qiniu = require('qiniu')
 const axios = require('axios')
 const fs = require('fs')
-const { join } = require('path')
-const Store = require('electron-store')
-const settingsStore = new Store({name: 'Settings'})
 
 //understand more: https://developer.qiniu.com/kodo/sdk/1289/nodejs#rs-delete
 class QiniuManger {

@@ -4,15 +4,15 @@ body::-webkit-scrollbar,.file-lists::-webkit-scrollbar,.tab-lists::-webkit-scrol
 }
 
 body::-webkit-scrollbar-thumb,.file-lists::-webkit-scrollbar-thumb,.tab-lists::-webkit-scrollbar-thumb,.CodeMirror-vscrollbar::-webkit-scrollbar-thumb {/*滚动条里面小方块*/
-    border-radius: 10px;
-     -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    border-radius: 1px;
+     /* -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2); */
     background: #535353;
 }
 
 body::-webkit-scrollbar-track,.file-lists::-webkit-scrollbar-track,.tab-lists::-webkit-scrollbar-track,.CodeMirror-vscrollbar::-webkit-scrollbar-track{/*滚动条里面轨道*/
-    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
-    border-radius: 10px;
-    background: #EDEDED;
+    /* -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2); */
+    border-radius: 1px;
+    background: #ffffff;
 }
 .out-range{
     width: 80%;
@@ -21,5 +21,5 @@ body::-webkit-scrollbar-track,.file-lists::-webkit-scrollbar-track,.tab-lists::-
     white-space: nowrap;
 }
 .CodeMirror-scroll{
-    min-height:  85vh !important;
+    min-height:  81vh !important;
 }

@@ -4,7 +4,6 @@ import PropTypes from 'prop-types'
 import './FileLists.less'
 import useMenuFileList from '../../hooks/useMenuFileList'
 import {getParentNode} from '../../../utils/domProcessing'
-const {remote,ipcRenderer} = window.require('electron')
 
 const FileLists = ({files,onFileClick,onSaveEditTitle,onFileDelete,pullCloudFile,uploadFile,activeFile_id}) => {
   /*
@@ -18,17 +17,9 @@ const FileLists = ({files,onFileClick,onSaveEditTitle,onFileDelete,pullCloudFile
   // file data
   const [value, setValue] = useState('')
   // menu options
-  const clickElement = useMenuFileList([{
-    label:'重命名 (rename)',
-    click: () => {
-      const getFileItem = getParentNode(clickElement, 'file-item')
-      if(getFileItem) {
-        const file_id = getFileItem.getAttribute('data-id')
-        setEditStatus(file_id)
-      }
-    }
-  },{
-    label: '拉取 (pull)',
+  const clickElement = useMenuFileList([
+ {
+    label: '拉取',
     click: () => {
       const getFileItem = getParentNode(clickElement, 'file-item')
       if(getFileItem) {
@@ -37,7 +28,7 @@ const FileLists = ({files,onFileClick,onSaveEditTitle,onFileDelete,pullCloudFile
       }
     }
   },{
-    label:'上传 (upload)',
+    label:'上传',
     click: () => {
       const getFileItem = getParentNode(clickElement, 'file-item')
       if(getFileItem) {
@@ -45,17 +36,31 @@ const FileLists = ({files,onFileClick,onSaveEditTitle,onFileDelete,pullCloudFile
         uploadFile(file_id)
       }
     }
+  },
+  {
+    type: 'separator'
   },{
-    label:'云空间删除 (delete in cloud)',
+    label:'云空间删除',
     click: () => {
       const getFileItem = getParentNode(clickElement, 'file-item')
       if(getFileItem) {
         const file_id = getFileItem.getAttribute('data-id')
         onFileDelete(file_id,true)
       }
+    },
+    accelerator: true
+  },
+  {
+    label:'重命名',
+    click: () => {
+      const getFileItem = getParentNode(clickElement, 'file-item')
+      if(getFileItem) {
+        const file_id = getFileItem.getAttribute('data-id')
+        setEditStatus(file_id)
+      }
     }
   },{
-    label:'删除 (delete)',
+    label:'删除',
     click: () => {
       const getFileItem = getParentNode(clickElement, 'file-item')
       if(getFileItem) {

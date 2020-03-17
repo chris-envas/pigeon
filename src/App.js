@@ -169,10 +169,10 @@ function App() {
   }
   const onFileDelete = (id,status) => {
     //delete file data and update electron store
-    const getFile = files.find(file => file.id === id)
-    const { key, title } = getFile
-    console.log(getFile,files,id)
-    if(getFile) {
+    const File = files.find(file => file.id === id)
+    const { title,path } = File
+    console.log(File,files,id)
+    if(File) {
       delete enumfile[id]
       // delete opened tab 
       onCloseTab(id)
@@ -184,12 +184,12 @@ function App() {
         dialog.showMessageBox({
           type:'info',
           title: '彻底删除(不可逆)',
-          message: `确定从云空间删除${getFile.title}文件(本地文件将一同被删除)`,
+          message: `确定从云空间删除${title}文件(本地文件将一同被删除)`,
           buttons: ['是','否'],
         }).then(status => {
-          if(status.response == '0') {
+          if(status.response === '0') {
            // it is dangererous to delete directly
-            fileProcessing.deleteFile(getFile.path).then((res) => {
+            fileProcessing.deleteFile(path).then((res) => {
               console.log(res)
             })
             ipcRenderer.send('delete-to-qiniu',{
@@ -206,7 +206,7 @@ function App() {
     const file = files.find(file => file.id === id)
     if(title) {
       const newPath = join(dirname(file.path),`${title}`)
-      if(isNew) {
+      if(!file.path || isNew) {
         // if new file we should update files and save electron store 
         enumfile[id].title = title
         enumfile[id].isNew = false
@@ -290,7 +290,7 @@ function App() {
         const uploadCloudDoc = ['accessKey', 'secretKey', 'bucketName','enableAutoSync'].every(key => !!settingsStore.get(key))
         if(uploadCloudDoc) {
           // send to main process upload-file event
-          ipcRenderer.send('upload-file',{key:`${title}md`,path})
+          ipcRenderer.send('upload-file',{key:`${title}`,path})
         }
         setUnSaveFile_ids(unSaveFile_ids.filter(unSaveFile_id => unSaveFile_id !== activFile.id))
       })
@@ -335,20 +335,25 @@ function App() {
   }
   // current file upload to the qiniu
   const activeUploaded = () => {
-    const { id } = activFile
-    const modifiedFile = {...enumfile[id], isSynced: true, updateAt: (+new Date())}
-    const newFiles = { ...enumfile, [id]: modifiedFile}
-    dealWithSaveFileStore(enumToArr(newFiles))
-    setFiles(enumToArr(newFiles))
+    console.log('activeUploaded',activFile)
+    if(activFile) {
+      const { id } = activFile
+      const modifiedFile = {...enumfile[id], isSynced: true, updateAt: (+new Date())}
+      const newFiles = { ...enumfile, [id]: modifiedFile}
+      dealWithSaveFileStore(enumToArr(newFiles))
+      setFiles(enumToArr(newFiles))
+    }else{
+      dialog.showErrorBox('上传错误','未选中当前文件，请重新上传')
+    }
   }
   const allFileDownload = (event,msg) => {
     const { title, path,status  } = msg
     console.log(msg)
     // extend new files
-    if(status == '200') {
+    if(status === '200') {
       // if it is exists
       let isFind = files.find(file => {
-        if(file.path == path && file.title == title) {
+        if(file.path === path && file.title === title) {
           return file
         }
       })
@@ -380,15 +385,23 @@ function App() {
       switch (status) {
         case '200':
           newFile = { ...enumfile[id], body: value, isLoading: true, isSynced: true, updateAt: (+new Date())}
-          alert('下载成功')
+          dialog.showMessageBox({
+            type: 'info',
+            title: '下载成功',
+            message: `下载成功`
+          })
           break;
         case '303':
           newFile = { ...enumfile[id], body: value, isLoading: true}
-          alert('当前已是最新文件')
+          dialog.showMessageBox({
+            type: 'info',
+            title: '下载成功',
+            message: `当前已是最新文件`
+          })
           break; 
         case '612':
           newFile = { ...enumfile[id], body: value, isLoading: true}
-          alert('网络错误')
+          remote.dialog.showErrorBox('失败', '获取云空间列表信息失败，请稍后再试')
           break;
         default:
           break;
@@ -402,28 +415,26 @@ function App() {
   // go to the qiniu to get file
   const pullCloudFile = (file_id) => {
     // get sync auto
-    // const getAutoSync = () => ['accessKey', 'secretKey', 'bucketName', 'enableAutoSync'].every(key => !!settingsStore.get(key))
-    // if(getAutoSync()) {
-    //   const currentFile = enumfile[file_id]
-    //   const { id, title, path } = currentFile 
-    //   ipcRenderer.send('download-file',{
-    //     key: `${title}md`,
-    //     path,
-    //     id
-    //   })
-    // }
-    const currentFile = enumfile[file_id]
+    const getAutoSync = () => ['accessKey', 'secretKey', 'bucketName'].every(key => {
+      console.log(key,settingsStore.get(key))
+      return !!settingsStore.get(key)
+    })
+    if(getAutoSync()) {
+      const currentFile = enumfile[file_id]
       const { id, title, path } = currentFile 
       ipcRenderer.send('download-file',{
         key: `${title}`,
         path,
         id
       })
+    }else{
+      remote.dialog.showErrorBox('失败', '请前往配置页面，进行云空间设置')
+    }
   } 
   // go to the qiniu to upload file
   const uploadFile = (file_id) => {
     // get upload auto
-    const getAutoSync = () => ['accessKey', 'secretKey', 'bucketName', 'enableAutoSync'].every(key => !!settingsStore.get(key))
+    const getAutoSync = () => ['accessKey', 'secretKey', 'bucketName'].every(key => !!settingsStore.get(key))
     if(getAutoSync) {
       const currentFile = enumfile[file_id]
       const { id, title, path } = currentFile 
@@ -433,6 +444,8 @@ function App() {
         id,
         manual: true
       })
+    }else{
+      remote.dialog.showErrorBox('失败', '请前往配置页面，进行云空间设置')
     }
   }
   const loadingStatus = (event,status) => {
@@ -536,6 +549,9 @@ function App() {
                 activeFile_id={activeFile_id}
               /> 
               <SimpleMDE
+              style={{
+                position: 'relative',
+                top: '-5px'}}
               key={activFile && activFile.id} 
               value={activFile && activFile.body}
               onChange={value => {

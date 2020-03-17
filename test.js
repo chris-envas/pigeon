@@ -10,10 +10,10 @@ const QiniuManger = require('./src/utils/qiniuManger')
 var accessKey = 'kwIRkNS6Y0qMSAkxXs8LoH6M70jlEh7DAGPbkdM4';
 var secretKey = 'Wrbu-U2XgaF_MwloLO5XhmNcvQvKYKEXWjlQpNVW';
 var localFile = "/Users/Administrator/Desktop/hexo-blog/Node线上部署-Unbutu16-04.md";
-var key = 'Node线上部署-Unbutu16-04.md';
-const path = require('path')
-const downloadPath = path.join(__dirname, 'shadowsocks-libev-server.md')
-console.log(downloadPath)
+var key = 'create-react-app搭建Electron开发环境.md';
+// const path = require('path')
+// const downloadPath = path.join(__dirname, 'shadowsocks-libev-server.md')
+// console.log(downloadPath)
 // var obj = {
 //         key: 'Typescript牛刀小试 - 副本 (2).md',
 //         hash: 'FrW7_Mfeu4XQRVp0dsmUQMv7HNsf',
@@ -42,6 +42,6 @@ const manger = new QiniuManger(accessKey, secretKey, 'cloud-doc-rousoruce')
 // manger.getListPrefix().then(res => {
 //     console.log(res)
 // })
-getState.stat().then(res => {
+manger.getState(key).then(res => {
     console.log(res)
 })

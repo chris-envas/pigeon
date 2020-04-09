@@ -15,8 +15,7 @@
     "electron-log": "^4.0.7",
     "electron-store": "^4.0.0",
     "electron-updater": "^4.2.2",
-    "qiniu": "^7.3.0",
-    "qiniu-mithril": "^1.0.0"
+    "qiniu": "^7.3.0"
   },
   "homepage": "./",
   "main": "main.js",
@@ -51,7 +50,8 @@
     ],
     "mac": {
       "category": "public.app-category.productivity",
-      "artifactName": "${productName}-${version}-${arch}.${text}"
+      "artifactName": "${productName}-${version}-${arch}.${text}",
+      "icon": "./build/icon.ico"
     },
     "dmg": {
       "background": "assets/appdmg.png",
@@ -80,19 +80,23 @@
         "nsis"
       ],
       "artifactName": "${productName}-Setup-${version}.${ext}",
-      "publisherName": "chris"
+      "publisherName": "chris",
+      "icon": "./build/icon.ico"
     },
     "nsis": {
       "allowToChangeInstallationDirectory": true,
       "oneClick": false,
-      "perMachine": false
+      "perMachine": false,
+      "installerIcon": "./build/icon.ico",
+      "uninstallerIcon": "./build/icon.ico"
     },
     "linux": {
       "category": "Utility",
       "target": [
         "deb",
         "AppImage"
-      ]
+      ],
+      "icon": "./build/icon.ico"
     },
     "files": [
       "build/**/*",

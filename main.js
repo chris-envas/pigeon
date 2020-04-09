@@ -42,55 +42,55 @@ const mainOption = {
 }
 
 app.on("ready", () => {
-	// if (isDev) {
-	// 	autoUpdater.updateConfigPath = path.join(__dirname, 'dev-app-update.yml') // configuration can trigger update functionality during development
-	// }
-	// autoUpdater.autoDownload = false // 取消自动下载
-	// autoUpdater.checkForUpdates() // 检查更新
-	// autoUpdater.on('error', error => {
-	// 	dialog.showErrorBox('Check Update Error', error === null ? 'unknow' : error)
-	// })
-	// // electron-builder found lastest release
-	// autoUpdater.on('update-available', () => {
-	// 	dialog.showMessageBox({
-	// 		type: 'info',
-	// 		title: '发现新版本',
-	// 		message: '是否更新到最新应用',
-	// 		buttons: ['开始下载', '暂不更新'],
-	// 	}).then(status => {
-	// 		console.log(JSON.stringify(status))
-	// 		if (status.response == '0') {
-	// 			console.log('开始下载')
-	// 			autoUpdater.downloadUpdate()
-	// 		}
-	// 	})
-	// })
-	// // electron-builder check no lastest release
-	// autoUpdater.on('update-not-available', () => {
-	// 	dialog.showMessageBox({
-	// 		title: '最新版本',
-	// 		message: '已获得最新版本',
-	// 	})
-	// })
-	// // electron-builder listen lastest release download progress
-	// autoUpdater.on('download-progress', progressObj => {
-	// 	let log_message = `download speed: ${progressObj.bytesPerSecond}`
-	// 	log_message += `- download' ${progressObj.percent} %`
-	// 	log_message += `(${progressObj.transferred}/${progressObj.total})`
-	// 	console.log(log_message)
-	// })
-	// // electron-builder listen update download event
-	// autoUpdater.on('update-downloaded', () => {
-	// 	dialog.showMessageBox({
-	// 		title: '安装更新',
-	// 		message: '更新下载完毕，将重启应用完成更新'
-	// 	}).then(() => {
-	// 		setImmediate(() => autoUpdater.quitAndInstall())
-	// 	})
-	// })
+	if (isDev) {
+		autoUpdater.updateConfigPath = path.join(__dirname, 'dev-app-update.yml') // configuration can trigger update functionality during development
+	}
+	autoUpdater.autoDownload = false // 取消自动下载
+	autoUpdater.checkForUpdates() // 检查更新
+	autoUpdater.on('error', error => {
+		dialog.showErrorBox('Check Update Error', error === null ? 'unknow' : error)
+	})
+	// electron-builder found lastest release
+	autoUpdater.on('update-available', () => {
+		dialog.showMessageBox({
+			type: 'info',
+			title: '发现新版本',
+			message: '是否更新到最新应用',
+			buttons: ['开始下载', '暂不更新'],
+		}).then(status => {
+			console.log(JSON.stringify(status))
+			if (status.response == '0') {
+				console.log('开始下载')
+				autoUpdater.downloadUpdate()
+			}
+		})
+	})
+	// electron-builder check no lastest release
+	autoUpdater.on('update-not-available', () => {
+		dialog.showMessageBox({
+			title: '最新版本',
+			message: '已获得最新版本',
+		})
+	})
+	// electron-builder listen lastest release download progress
+	autoUpdater.on('download-progress', progressObj => {
+		let log_message = `download speed: ${progressObj.bytesPerSecond}`
+		log_message += `- download' ${progressObj.percent} %`
+		log_message += `(${progressObj.transferred}/${progressObj.total})`
+		console.log(log_message)
+	})
+	// electron-builder listen update download event
+	autoUpdater.on('update-downloaded', () => {
+		dialog.showMessageBox({
+			title: '安装更新',
+			message: '更新下载完毕，将重启应用完成更新'
+		}).then(() => {
+			setImmediate(() => autoUpdater.quitAndInstall())
+		})
+	})
 
 	mainWindow = new BrowserWindow(mainOption)
-	mainWindow.webContents.openDevTools()
+	// mainWindow.webContents.openDevTools()
 	let url = isDev ? 'http://localhost:3000/' : `file://${path.join(__dirname, './index.html')}`
 	if (url) mainWindow.loadURL(url)
 	let menu = Menu.buildFromTemplate(menuTemplate)

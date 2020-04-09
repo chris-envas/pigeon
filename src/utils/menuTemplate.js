@@ -89,19 +89,19 @@ let menuTemplate = [{
                         focusedWindow.setFullScreen(!focusedWindow.isFullScreen());
                 }
             },
-            {
-                label: '切换开发者工具',
-                accelerator: (function () {
-                    if (process.platform === 'darwin')
-                        return 'Alt+Command+I';
-                    else
-                        return 'Ctrl+Shift+I';
-                })(),
-                click: (item, focusedWindow) => {
-                    if (focusedWindow)
-                        focusedWindow.toggleDevTools();
-                }
-            },
+            // {
+            //     label: '切换开发者工具',
+            //     accelerator: (function () {
+            //         if (process.platform === 'darwin')
+            //             return 'Alt+Command+I';
+            //         else
+            //             return 'Ctrl+Shift+I';
+            //     })(),
+            //     click: (item, focusedWindow) => {
+            //         if (focusedWindow)
+            //             focusedWindow.toggleDevTools();
+            //     }
+            // },
         ]
     },
     {
@@ -110,7 +110,7 @@ let menuTemplate = [{
         submenu: [{
             label: '关于我',
             click: () => {
-                shell.openExternal('https://github.com')
+                shell.openExternal('https://github.com/luojinxu520/pigeon')
             }
         }]
     }

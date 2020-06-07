@@ -10004,14 +10004,6 @@ q@^1.1.2:
   resolved "https://registry.npm.taobao.org/q/download/q-1.5.1.tgz#7e32f75b41381291d04611f1bf14109ac00651d7"
   integrity sha1-fjL3W0E4EpHQRhHxvxQQmsAGUdc=
 
-qiniu-mithril@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/qiniu-mithril/-/qiniu-mithril-1.0.0.tgz#9c7721cb76d138172a8ba0f21ab9f5b541543b68"
-  integrity sha512-wk5NKwR5qtSfiGmtnM0pTb9lHmiPPEUueEn9kv12tPESV+UZxLY8FsTsKcVtrqkUxh1HuTtOCB6v7Js79NV6Cw==
-  dependencies:
-    axios "^0.19.2"
-    qiniu "^7.3.0"
-
 qiniu@^7.3.0:
   version "7.3.0"
   resolved "https://registry.npm.taobao.org/qiniu/download/qiniu-7.3.0.tgz#25bbdd844136a83a1a0069b106cc334bb3324e74"
@@ -13035,9 +13027,9 @@ websocket-driver@>=0.5.1:
     websocket-extensions ">=0.1.1"
 
 websocket-extensions@>=0.1.1:
-  version "0.1.3"
-  resolved "https://registry.npm.taobao.org/websocket-extensions/download/websocket-extensions-0.1.3.tgz#5d2ff22977003ec687a4b87073dfbbac146ccf29"
-  integrity sha1-XS/yKXcAPsaHpLhwc9+7rBRszyk=
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/websocket-extensions/-/websocket-extensions-0.1.4.tgz#7f8473bc839dfd87608adb95d7eb075211578a42"
+  integrity sha512-OqedPIGOfsDlo31UNwYbCFMSaO9m9G/0faIHj5/dZFDMFqPTcx6UwqyOy3COEaEOg/9VsGIpdqn62W5KhoKSpg==
 
 whatwg-encoding@^1.0.1, whatwg-encoding@^1.0.3, whatwg-encoding@^1.0.5:
   version "1.0.5"

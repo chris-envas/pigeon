@@ -10,7 +10,7 @@
   "description": "this is about doc upload for the app",
   "dependencies": {
     "antd": "^3.26.7",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "electron-is-dev": "^1.1.0",
     "electron-log": "^4.0.7",
     "electron-store": "^4.0.0",

@@ -8955,9 +8955,9 @@ path-key@^3.1.0:
   integrity sha1-WB9q3mWMu6ZaDTOA3ndTKVBU83U=
 
 path-parse@^1.0.6:
-  version "1.0.6"
-  resolved "https://registry.npm.taobao.org/path-parse/download/path-parse-1.0.6.tgz#d62dbb5679405d72c4737ec58600e9ddcf06d24c"
-  integrity sha1-1i27VnlAXXLEc37FhgDp3c8G0kw=
+  version "1.0.7"
+  resolved "https://registry.yarnpkg.com/path-parse/-/path-parse-1.0.7.tgz#fbc114b60ca42b30d9daf5858e4bd68bbedb6735"
+  integrity sha512-LDJzPVEEEPR+y48z93A0Ed0yXb8pAByGWo/k5YYdYgpY2/2EsOsksJrq7lOHxryrVOn1ejG6oAp8ahvOIQD8sw==
 
 path-to-regexp@0.1.7:
   version "0.1.7"
@@ -10003,14 +10003,6 @@ q@^1.1.2:
   version "1.5.1"
   resolved "https://registry.npm.taobao.org/q/download/q-1.5.1.tgz#7e32f75b41381291d04611f1bf14109ac00651d7"
   integrity sha1-fjL3W0E4EpHQRhHxvxQQmsAGUdc=
-
-qiniu-mithril@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/qiniu-mithril/-/qiniu-mithril-1.0.0.tgz#9c7721cb76d138172a8ba0f21ab9f5b541543b68"
-  integrity sha512-wk5NKwR5qtSfiGmtnM0pTb9lHmiPPEUueEn9kv12tPESV+UZxLY8FsTsKcVtrqkUxh1HuTtOCB6v7Js79NV6Cw==
-  dependencies:
-    axios "^0.19.2"
-    qiniu "^7.3.0"
 
 qiniu@^7.3.0:
   version "7.3.0"

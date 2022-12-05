@@ -3972,9 +3972,9 @@ decamelize@^1.1.1, decamelize@^1.1.2, decamelize@^1.2.0:
   integrity sha1-9lNNFRSCabIDUue+4m9QH5oZEpA=
 
 decode-uri-component@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.npm.taobao.org/decode-uri-component/download/decode-uri-component-0.2.0.tgz#eb3913333458775cb84cd1a1fae062106bb87545"
-  integrity sha1-6zkTMzRYd1y4TNGh+uBiEGu4dUU=
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/decode-uri-component/-/decode-uri-component-0.2.2.tgz#e69dbe25d37941171dd540e024c444cd5188e1e9"
+  integrity sha512-FqUYQ+8o158GyGTrMFJms9qh3CqTKvAqgqsTnkLI8sKu0028orqBhxNMFkFen0zGyg6epACD32pjVk58ngIErQ==
 
 decompress-response@^3.3.0:
   version "3.3.0"
@@ -10003,14 +10003,6 @@ q@^1.1.2:
   version "1.5.1"
   resolved "https://registry.npm.taobao.org/q/download/q-1.5.1.tgz#7e32f75b41381291d04611f1bf14109ac00651d7"
   integrity sha1-fjL3W0E4EpHQRhHxvxQQmsAGUdc=
-
-qiniu-mithril@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/qiniu-mithril/-/qiniu-mithril-1.0.0.tgz#9c7721cb76d138172a8ba0f21ab9f5b541543b68"
-  integrity sha512-wk5NKwR5qtSfiGmtnM0pTb9lHmiPPEUueEn9kv12tPESV+UZxLY8FsTsKcVtrqkUxh1HuTtOCB6v7Js79NV6Cw==
-  dependencies:
-    axios "^0.19.2"
-    qiniu "^7.3.0"
 
 qiniu@^7.3.0:
   version "7.3.0"
